@@ -11,4 +11,4 @@ export {
 
 export { 
     map
-} from './src/generator-extensions'
+} from './src/utils/effects-utils'

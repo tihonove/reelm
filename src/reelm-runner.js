@@ -1,7 +1,7 @@
 import { noop, effectType } from './effects'
 import ActionsObservable, { first } from './self-made-actions-observable'
-import { sideEffectToGenerator } from './generator-extensions'
-import effected from './effected'
+import { splitSpoiledState } from './utils/spoiled-state-utils'
+import { effectsToGenerator } from './utils/effects-utils'
 
 class Task {
     constructor(promiseObject) {
@@ -39,7 +39,7 @@ async function processPlainSideEffect(effect, dispatch, getState, actionObservab
 }
 
 async function runEffectGenerator(effect, dispatch, getState, actionObservable) {
-    effect = sideEffectToGenerator(effect);
+    effect = effectsToGenerator(effect);
     var generator = effect();
     
     if (generator.then)
@@ -66,9 +66,9 @@ export function reelmRunner() {
         var actionsObservable = new ActionsObservable();
 
         var store = next((...args) => { 
-            var effectedState = effected.lift(reducer(...args));
-            lastEffect = effected.getEffect(effectedState);
-            return effected.getState(effectedState);
+            var [state, effects] = splitSpoiledState(reducer(...args));
+            lastEffect = effects;
+            return state;
         }, initialState, enhancer);
 
         function dispatch(action) {
