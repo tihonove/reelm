@@ -30,3 +30,5 @@ export const call = generator => effect(effectType.CALL, { generator })
 export const join = task => effect(effectType.JOIN, { task })
 export const put = action => effect(effectType.PUT, { action })
 export const take = conditionObject => effect(effectType.TAKE, { condition: normalizeTakeCondition(conditionObject) })
+
+export { map } from './utils/effects-utils'
