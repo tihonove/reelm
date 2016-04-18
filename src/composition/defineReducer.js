@@ -2,6 +2,7 @@ import conditional from './conditional'
 import scoped from './scoped'
 import over from './over'
 
+import { map } from '../utils/effects-utils'
 import { splitSpoiledState } from '../utils/spoiled-state-utils';
 import { pipeReducers, compose, pipe, overEffects } from '../utils/reducer-utils';
 
