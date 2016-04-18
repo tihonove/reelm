@@ -1,6 +1,6 @@
 {
   "name": "reelm",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Awesome library combining redux, saga and elm",
   "main": "index.js",
   "author": "tihonove",
