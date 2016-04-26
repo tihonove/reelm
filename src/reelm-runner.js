@@ -20,6 +20,9 @@ async function processPlainSideEffect(effect, dispatch, getState, actionObservab
     if (effect.type === effectType.TAKE) {
         return await actionObservable::first(effect.condition);
     }
+    if (effect.type === effectType.PROMISE) {
+        return await effect.promiseFunc();
+    }
     if (effect.type === effectType.SELECT) {
         return effect.selector(getState());
     }
