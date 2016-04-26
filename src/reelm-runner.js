@@ -77,7 +77,7 @@ export function reelmRunner() {
         function dispatch(action) {
             var result = store.dispatch(action);
             actionsObservable.notify(action)
-            runEffectGenerator(lastEffect, ::store.dispatch, ::store.getState, actionsObservable);
+            runEffectGenerator(lastEffect, dispatch, ::store.getState, actionsObservable);
             return result;
         }
 
