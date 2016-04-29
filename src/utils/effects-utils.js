@@ -27,16 +27,27 @@ export function map(selector) {
     var effects = this;
     return function* () {
         var generator = effectsToGenerator(effects)();
-        var nextArgument = undefined;
+        if (generator.then) {
+            yield generator;
+            return;
+        }
+
+        var next = generator.next();
+        var nextArgument;
         while(true) {
-            var next = generator.next(nextArgument);
             if (next.done)
                 return next.value;
-            if (next.value.type === effectType.FORK || next.value.type === effectType.CALL)
-                nextArgument = yield { ...next.value, generator: next.value.generator::map(selector) };
-            else
-                nextArgument = yield selector(next.value);
-        }        
+            try {
+                if (next.value.type === effectType.FORK || next.value.type === effectType.CALL)
+                    nextArgument = yield { ...next.value, generator: next.value.generator::map(selector) };
+                else
+                    nextArgument = yield selector(next.value);
+                next = generator.next(nextArgument)
+            }
+            catch(e) {
+                next = generator.throw(e);
+            }        
+        }
     }
 }
 

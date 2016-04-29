@@ -1,0 +1,1 @@
+global.ait = (spec, fn) => it(spec, (done) => fn().then(done, e => { fail(e); done() }));

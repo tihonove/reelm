@@ -10,8 +10,7 @@ export const effectType = {
     JOIN: 'JOIN',
     PUT: 'PUT',
     TAKE: 'TAKE',
-    NOOP: 'NOOP',
-    PROMISE: 'PROMISE',    
+    NOOP: 'NOOP'
 }
 
 function normalizeTakeCondition(takeArgument) {
@@ -31,6 +30,5 @@ export const call = generator => effect(effectType.CALL, { generator })
 export const join = task => effect(effectType.JOIN, { task })
 export const put = action => effect(effectType.PUT, { action })
 export const take = conditionObject => effect(effectType.TAKE, { condition: normalizeTakeCondition(conditionObject) })
-export const promise = promiseFunc => effect(effectType.PROMISE, { promiseFunc: promiseFunc })
 
 export { map } from './utils/effects-utils'

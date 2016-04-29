@@ -1,6 +1,6 @@
-import conditional from './conditional'
-import scoped from './scoped'
-import over from './over'
+import conditional from '../composition/conditional'
+import scoped from '../composition/scoped'
+import over from '../composition/over'
 
 import { map } from '../utils/effects-utils'
 import { splitSpoiledState } from '../utils/spoiled-state-utils';
@@ -26,9 +26,16 @@ export default function defineReducer(initialState) {
         return resultReducer;
     }
 
+    resultReducer.always = (reducer) => {
+        updaters.push(reducer);
+        return resultReducer;
+    }
+
     resultReducer.scopeTo = (pattern, stateSubSetDefinition, reducer) => {
         if (typeof stateSubSetDefinition === 'function') {
-            updaters.push(scoped(pattern)( (state, action) => over(stateSubSetDefinition(action.match))(reducer)(state, action) ));
+            updaters.push(scoped(pattern)( (state, action) => {
+                return over(stateSubSetDefinition(action.match))(reducer)(state, action)
+            } ));
         }
         else {
             updaters.push(scoped(pattern)(over(stateSubSetDefinition)(reducer)));
