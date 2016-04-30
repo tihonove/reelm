@@ -2,6 +2,9 @@ language: node_js
 node_js:
 - '5'
 install: npm install --only=dev
+script:
+    - npm test
+    - npm run lint
 notifications:
   pushover:
     api_key:
