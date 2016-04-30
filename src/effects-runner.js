@@ -19,11 +19,11 @@ async function processPlainSideEffect(effect, dispatch, getState, actionObservab
     if (effect.type === effectType.PUT) {
         return dispatch(effect.action);
     }
+    if (effect.type === effectType.CALL) {
+        return runEffectGenerator(effect.generator, dispatch, getState, actionObservable);
+    }
     if (effect.type === effectType.TAKE) {
         return await actionObservable::first(effect.condition);
-    }
-    if (effect.type === effectType.PROMISE) {
-        return await effect.promiseFunc();
     }
     if (effect.type === effectType.SELECT) {
         return effect.selector(getState());
@@ -34,9 +34,6 @@ async function processPlainSideEffect(effect, dispatch, getState, actionObservab
     if (effect.type === effectType.JOIN) {
         return effect.task.join();
     } 
-    if (effect.type === effectType.CALL) {
-        return runEffectGenerator(effect.generator, dispatch, getState, actionObservable);
-    }
     if (effect.type === effectType.NOOP) {
         return;
     }
@@ -44,8 +41,7 @@ async function processPlainSideEffect(effect, dispatch, getState, actionObservab
 }
 
 async function runEffectGenerator(effect, dispatch, getState, actionObservable) {
-    effect = effectsToGenerator(effect);
-    var generator = effect();    
+    var generator = effectsToGenerator(effect)();
     if (generator.then) {
         return await generator;
     }

@@ -3,7 +3,6 @@ import { reelmRunner } from '../../src/index'
 import { defineReducer, perform } from '../../src/fluent'
 
 describe("ReelmRunner", () => {
-
     it("should not affect normal reducers", () => {
         var reducer = jasmine.createSpy('reducer');
 
@@ -27,7 +26,7 @@ describe("ReelmRunner", () => {
         await dispatchResult;
     })
 
-/*    it("should allow handle exceptions in different levels", () => {
+    it("should allow handle exceptions in different levels", () => {
         var reducer = jasmine.createSpy('reducer');
 
         var store = createStore(reducer, reelmRunner());
@@ -37,6 +36,6 @@ describe("ReelmRunner", () => {
             [ undefined, { type: '@@redux/INIT' } ],
             [ undefined, { type: 'Action' } ]
         ])
-    })*/
+    })
 
 })
