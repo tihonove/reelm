@@ -5,7 +5,7 @@
   ],
   "helpers": [
     "./helpers/**/*.js",
-    "../node_modules/jasmine-es6/lib/install.js",
+    "../node_modules/babel-core/register.js",
     "../node_modules/babel-polyfill/dist/polyfill.js"
   ],
   "stopSpecOnExpectationFailure": false,
