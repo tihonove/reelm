@@ -1,0 +1,6 @@
+{
+    "rules": {
+        "quote-props": ["error", "always"],
+        "quotes": ["error", "double"]
+    }
+}

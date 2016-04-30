@@ -5,6 +5,8 @@
   ],
   "helpers": [
     "./helpers/**/*.js",
+    "./node_modules/jasmine-expect/",
+    "../node_modules/jasmine-collection-matchers/index.js",
     "../node_modules/babel-core/register.js",
     "../node_modules/babel-polyfill/dist/polyfill.js"
   ],

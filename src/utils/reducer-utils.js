@@ -1,10 +1,13 @@
 import { extractState, extractEffects, spoiled, isSpoiledState } from '../utils/spoiled-state-utils';
 import { composeEffects } from '../utils/effects-utils';
 
-export const assignTo = nextSpoiledState => spoiledState => {
+const assignTo = nextSpoiledState => spoiledState => {
+    if (!isSpoiledState(spoiledState) && !isSpoiledState(spoiledState)) {
+        return spoiledState;
+    }
     return spoiled(
         extractState(spoiledState),
-        composeEffects(extractEffects(spoiledState), extractEffects(nextSpoiledState))
+        composeEffects(extractEffects(nextSpoiledState), extractEffects(spoiledState))
     );
 };
 

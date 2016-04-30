@@ -1,6 +1,6 @@
 import { effectType } from '../effects';
 
-import { mapIf } from '../utils/effects-utils';
+import { mapIf } from '../map-effects';
 import { compose, overState, overEffects } from '../utils/reducer-utils';
 import { getIn, updateIn } from '../utils/state-utils';
 

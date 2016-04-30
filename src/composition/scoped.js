@@ -2,7 +2,7 @@ import unwrap from './patterns/unwrap';
 import wrap from './patterns/wrap';
 import { effectType } from '../effects';
 
-import { map } from '../utils/effects-utils';
+import { map } from '../map-effects';
 import { overEffects, compose } from '../utils/reducer-utils';
 
 function isDynamicPattern(pattern) {
@@ -29,10 +29,12 @@ function keysEquals(obj1 = {}, obj2 = {}) {
     return (
         Object
             .getOwnPropertyNames(obj1)
-            .reduce((result, prop) => result & obj1[prop] === obj2[prop], true) &&
+            .map(prop => obj1[prop] === obj2[prop])
+            .reduce((x, y) => x && y, true) &&
         Object
             .getOwnPropertyNames(obj2)
-            .reduce((result, prop) => result & obj1[prop] === obj2[prop], true)
+            .map(prop => obj1[prop] === obj2[prop])
+            .reduce((x, y) => x && y, true)
     );
 }
 

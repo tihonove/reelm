@@ -7,7 +7,7 @@ export const extractState = spoiledStateOrState =>
     isSpoiledState(spoiledStateOrState) ? spoiledStateOrState.state : spoiledStateOrState;
 
 export const extractEffects = spoiledStateOrState =>
-    isSpoiledState(spoiledStateOrState) ? spoiledStateOrState.effect : noop();
+    isSpoiledState(spoiledStateOrState) ? spoiledStateOrState.effect : null;
 
 export const splitSpoiledState = spoiledStateOrState =>
     [extractState(spoiledStateOrState), extractEffects(spoiledStateOrState)];

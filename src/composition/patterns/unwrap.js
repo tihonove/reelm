@@ -21,7 +21,8 @@ export default pattern => {
      */
     return action => {
         const regExpMatch = action.type.match(compiledPattern.regExp);
-        if (regExpMatch) {
+
+        if (!regExpMatch) {
             return false;
         }
 

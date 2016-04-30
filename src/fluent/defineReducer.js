@@ -2,7 +2,7 @@ import conditional from '../composition/conditional';
 import scoped from '../composition/scoped';
 import over from '../composition/over';
 
-import { map } from '../utils/effects-utils';
+import { map } from '../map-effects';
 import { pipeReducers, pipe, overEffects } from '../utils/reducer-utils';
 
 export default function defineReducer(initialState) {

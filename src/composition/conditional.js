@@ -9,10 +9,14 @@ export default function conditional(pattern) {
                 return state;
             }
             const unwrappedAction = compiledUnwrap(action);
-            if (unwrappedAction) {
-                return reducer(state, { ...unwrappedAction, match: unwrappedAction.match[pattern] });
+            if (!unwrappedAction) {
+                return state;
             }
-            return state;
+            const actionWithMatch = {
+                ...unwrappedAction,
+                match: unwrappedAction.match[pattern],
+            };
+            return reducer(state, actionWithMatch);
         };
     };
 }

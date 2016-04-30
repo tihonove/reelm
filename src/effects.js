@@ -26,12 +26,27 @@ function normalizeTakeCondition(takeArgument) {
     return takeArgument;
 }
 
-export const noop = () => effect(effectType.NOOP);
-export const select = (selector = x => x) => effect(effectType.SELECT, { selector });
-export const fork = generator => effect(effectType.FORK, { generator });
-export const call = generator => effect(effectType.CALL, { generator });
-export const join = task => effect(effectType.JOIN, { task });
-export const put = action => effect(effectType.PUT, { action });
-export const take = conditionObject => effect(effectType.TAKE, { condition: normalizeTakeCondition(conditionObject) });
+export const noop = () =>
+    effect(effectType.NOOP);
 
-export { map } from './utils/effects-utils';
+export const select = (selector = x => x) =>
+    effect(effectType.SELECT, { selector });
+
+export const fork = generator =>
+    effect(effectType.FORK, { generator });
+
+export const call = generator =>
+    effect(effectType.CALL, { generator });
+
+export const join = task =>
+    effect(effectType.JOIN, { task });
+
+export const put = action =>
+    effect(effectType.PUT, { action });
+
+export const take = conditionObject =>
+    effect(effectType.TAKE, {
+        condition: normalizeTakeCondition(conditionObject),
+    });
+
+export { map } from './map-effects';

@@ -12,15 +12,22 @@ class Task {
     }
 }
 
-async function processPlainSideEffect(effect, dispatch, getState, actionObservable) {
+async function processPlainSideEffect(
+    effect, dispatch, getState, actionObservable) {
     if (effect.then) {
         return await effect;
+    }
+    if (Array.isArray(effect)) {
+        const effectPromises = effect
+            .map(x => runEffects(x, dispatch, getState, actionObservable));
+        return await Promise.all(effectPromises);
     }
     if (effect.type === effectType.PUT) {
         return dispatch(effect.action);
     }
     if (effect.type === effectType.CALL) {
-        return runEffectGenerator(effect.generator, dispatch, getState, actionObservable);
+        return runEffects(
+            effect.generator, dispatch, getState, actionObservable);
     }
     if (effect.type === effectType.TAKE) {
         return await actionObservable::first(effect.condition);
@@ -29,7 +36,10 @@ async function processPlainSideEffect(effect, dispatch, getState, actionObservab
         return effect.selector(getState());
     }
     if (effect.type === effectType.FORK) {
-        return new Task(runEffectGenerator(effect.generator, dispatch, getState, actionObservable));
+        const resultPromise =
+            runEffects(
+                effect.generator, dispatch, getState, actionObservable);
+        return new Task(resultPromise);
     }
     if (effect.type === effectType.JOIN) {
         return effect.task.join();
@@ -40,7 +50,8 @@ async function processPlainSideEffect(effect, dispatch, getState, actionObservab
     throw `Uncatched side effect: ${JSON.stringify(effect)}`;
 }
 
-async function runEffectGenerator(effect, dispatch, getState, actionObservable) {
+async function runEffects(
+    effect, dispatch, getState, actionObservable) {
     const generator = effectsToGenerator(effect)();
     if (generator.then) {
         return await generator;
@@ -50,7 +61,8 @@ async function runEffectGenerator(effect, dispatch, getState, actionObservable) 
     let nextArgument;
     while (!next.done) {
         try {
-            nextArgument = await processPlainSideEffect(next.value, dispatch, getState, actionObservable);
+            nextArgument = await processPlainSideEffect(
+                next.value, dispatch, getState, actionObservable);
             next = generator.next(nextArgument);
         }
         catch (exception) {
@@ -60,4 +72,4 @@ async function runEffectGenerator(effect, dispatch, getState, actionObservable) 
     return next.value;
 }
 
-export default runEffectGenerator;
+export default runEffects;

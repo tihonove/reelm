@@ -1,0 +1,5 @@
+{
+    rules: {
+        "max-len": [2, 80, { "ignorePattern": "^\\s*(it|ait)\\('" }]
+    }
+}

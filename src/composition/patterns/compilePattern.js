@@ -13,7 +13,8 @@ const isPatternValid = pattern => {
     if (pattern && Utils.isString(pattern) && Utils.last(pattern) !== '.') {
         const matched = pattern.match(PATTERN_VALIDATON_REGEXP);
 
-        return matched && Utils.sumCharsInArrayOfStrings(matched) === pattern.length;
+        return matched &&
+            Utils.sumCharsInArrayOfStrings(matched) === pattern.length;
     }
     return false;
 };

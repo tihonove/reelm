@@ -3,23 +3,23 @@ import { createStore } from 'redux';
 // public api imports
 import {
     reelmRunner,
-    //pipeReducers,
-    //over,
-    //scoped,
-    //conditional,
-} from '../../src/index';
+    pipeReducers,
+    over,
+    scoped,
+    conditional,
+} from '../../index';
 
 import {
     defineReducer,
     perform,
-} from '../../src/fluent';
+} from '../../fluent';
 
-describe('ReelmRunner', () => {
-    it('should not affect normal reducers', () => {
+describe('Public interface', () => {
+    ait('should contain reelmRunner that should not call reducers', async () => {
         const reducer = jasmine.createSpy('reducer');
 
         const store = createStore(reducer, reelmRunner());
-        store.dispatch({ type: 'Action' });
+        await store.dispatch({ type: 'Action' });
 
         expect(reducer.calls.allArgs()).toEqual([
             [undefined, { type: '@@redux/INIT' }],
@@ -27,7 +27,7 @@ describe('ReelmRunner', () => {
         ]);
     });
 
-    ait('should returns Promise from dispatch', async () => {
+    ait('should contain reelmRunner that should returns Promise from dispatch', async () => {
         const reducer = defineReducer({})
             .always(perform(function* effect() {
                 return 1;
@@ -40,15 +40,14 @@ describe('ReelmRunner', () => {
         await dispatchResult;
     });
 
-    it('should allow handle exceptions in different levels', () => {
-        const reducer = jasmine.createSpy('reducer');
+    it('should contain pipeReducers', async () => {
+        const reducer = jasmine.createSpy('reducer').and.callFake(state => state);
 
-        const store = createStore(reducer, reelmRunner());
-        store.dispatch({ type: 'Action' });
+        const pipedReducer = pipeReducers(reducer);
 
+        expect(pipedReducer('state', 'action')).toEqual('state');
         expect(reducer.calls.allArgs()).toEqual([
-            [undefined, { type: '@@redux/INIT' }],
-            [undefined, { type: 'Action' }],
+            ['state', 'action'],
         ]);
     });
 });

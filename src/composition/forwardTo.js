@@ -1,14 +1,18 @@
+function containsDot(str) {
+    return str.toString().indexOf('.') >= 0;
+}
+
 export default (dispatch, ...types) => {
     if (types.length === 0) {
         return dispatch;
     }
-
-    if (types.some(type => type.toString().indexOf('.') >= 0)) {
+    if (types.some(containsDot)) {
         throw new Error('Action type can\'t contain dot');
     }
 
+    const typePrefix = types.join('.');
     return action => dispatch({
         ...action,
-        type: `${types.reduce((memo, type) => `${memo}${type}.`, '')}${action.type}`,
+        type: `${typePrefix}.${action.type}`,
     });
 };

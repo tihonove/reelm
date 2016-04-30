@@ -25,6 +25,8 @@
     "eslint-plugin-jasmine": "^1.8.1",
     "eslint-plugin-react": "^5.0.1",
     "jasmine": "^2.4.1",
+    "jasmine-collection-matchers": "^0.2.0",
+    "jasmine-expect": "^2.0.2",
     "redux": "^3.5.2",
     "rimraf": "^2.5.2",
     "webpack": "^1.12.14"
