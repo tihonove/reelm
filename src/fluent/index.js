@@ -1,2 +1,2 @@
-export defineReducer from './defineReducer'
-export perform from './perform'
+export defineReducer from './defineReducer';
+export perform from './perform';

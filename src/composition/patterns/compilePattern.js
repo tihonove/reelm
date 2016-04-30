@@ -10,13 +10,12 @@ const PATTERN_VALIDATON_REGEXP = /[^.\[\]]+\.?|\[[^.\[\]]+\]\.?/g;
  * @return {Bool}
  */
 const isPatternValid = pattern => {
-  if (pattern && Utils.isString(pattern) && Utils.last(pattern) !== '.') {
-    const matched = pattern.match(PATTERN_VALIDATON_REGEXP);
+    if (pattern && Utils.isString(pattern) && Utils.last(pattern) !== '.') {
+        const matched = pattern.match(PATTERN_VALIDATON_REGEXP);
 
-    return matched && Utils.sumCharsInArrayOfStrings(matched) === pattern.length;
-  } else {
+        return matched && Utils.sumCharsInArrayOfStrings(matched) === pattern.length;
+    }
     return false;
-  }
 };
 
 /**
@@ -26,22 +25,21 @@ const isPatternValid = pattern => {
  * @return {Array} List of chunks where chunk has name and flag "dynamic"
  */
 const splitPatternToChunks = pattern => pattern
-  .split('.')
-  .map(chunk => {
-    const match = chunk.match(/\[([a-zA-Z0-9\-]*)\]/);
+    .split('.')
+    .map(chunk => {
+        const match = chunk.match(/\[([a-zA-Z0-9\-]*)\]/);
 
-    if (match) {
-      return {
-        dynamic: true,
-        name: match[1]
-      };
-    } else {
-      return {
-        dynamic: false,
-        name: chunk
-      };
-    }
-  });
+        if (match) {
+            return {
+                dynamic: true,
+                name: match[1],
+            };
+        }
+        return {
+            dynamic: false,
+            name: chunk,
+        };
+    });
 
 /**
  * Build RegExp which can be used for pattern matching the action
@@ -50,13 +48,12 @@ const splitPatternToChunks = pattern => pattern
  * @return {RegExp}
  */
 const buildRegExpOfChunks = chunks => chunks
-  .reduce((memo, chunk) => {
-    if (chunk.dynamic) {
-      return memo + ALPHANUMERICAL_GROUP_REGEXP_STRING + '\\.';
-    } else {
-      return memo + chunk.name + '\\.';
-    }
-  }, '^') + '?(.*)?$';
+    .reduce((memo, chunk) => {
+        if (chunk.dynamic) {
+            return `${memo}${ALPHANUMERICAL_GROUP_REGEXP_STRING}\\.`;
+        }
+        return `${memo}${chunk.name}\\.`;
+    }, '^') + '?(.*)?$';
 
 /**
  * Compiles String pattern which may look like: Foo.Bar.[Baz]
@@ -72,15 +69,15 @@ const buildRegExpOfChunks = chunks => chunks
  * @returns {Object} List of Chunks and RegExp
  */
 export default pattern => {
-  if (!isPatternValid(pattern)) {
-    throw new Error('Invalid pattern provided');
-  }
+    if (!isPatternValid(pattern)) {
+        throw new Error('Invalid pattern provided');
+    }
 
-  const chunks = splitPatternToChunks(pattern);
-  const regExp = buildRegExpOfChunks(chunks);
+    const chunks = splitPatternToChunks(pattern);
+    const regExp = buildRegExpOfChunks(chunks);
 
-  return {
-    chunks,
-    regExp: new RegExp(regExp)
-  };
+    return {
+        chunks,
+        regExp: new RegExp(regExp),
+    };
 };

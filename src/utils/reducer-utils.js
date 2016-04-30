@@ -1,33 +1,31 @@
-import { extractState, extractEffects, spoiled, isSpoiledState } from '../utils/spoiled-state-utils'
-import { composeEffects } from '../utils/effects-utils'
+import { extractState, extractEffects, spoiled, isSpoiledState } from '../utils/spoiled-state-utils';
+import { composeEffects } from '../utils/effects-utils';
 
 export const assignTo = nextSpoiledState => spoiledState => {
     return spoiled(
         extractState(spoiledState),
         composeEffects(extractEffects(spoiledState), extractEffects(nextSpoiledState))
     );
-}
+};
 
 export function lift(stateReducer, effectsReducer) {
- return function (spoiledStateOrState) {
-     if (isSpoiledState(spoiledStateOrState)) {
-         return spoiled(
-             stateReducer(extractState(spoiledStateOrState)),
-             effectsReducer(extractEffects(spoiledStateOrState))
-         );             
-     }    
-     else {
-         return stateReducer(spoiledStateOrState);
-     }
- }    
+    return function leftedFunction(spoiledStateOrState) {
+        if (isSpoiledState(spoiledStateOrState)) {
+            return spoiled(
+                stateReducer(extractState(spoiledStateOrState)),
+                effectsReducer(extractEffects(spoiledStateOrState))
+            );
+        }
+        return stateReducer(spoiledStateOrState);
+    };
 }
 
 export function compose(...functons) {
-    return functons.reduce((r, f) => (...args) => r(f(...args)), x => x);
+    return functons.reduce((result, func) => (...args) => result(func(...args)), x => x);
 }
 
 export function pipe(...functons) {
-    return functons.reduceRight((r, f) => (...args) => r(f(...args)), x => x);
+    return functons.reduceRight((result, func) => (...args) => result(func(...args)), x => x);
 }
 
 export function overState(stateReducer) {
@@ -41,8 +39,8 @@ export function overEffects(effectsReducer) {
 export function pipeReducers(...reducers) {
     return (state, action) => {
         const reducersChain = reducers
-            .map(r => s => r(s, action))
-            .map(r => s => pipe(extractState, r, assignTo(s))(s));
+            .map(reducer => state => reducer(state, action))
+            .map(reducer => state => pipe(extractState, reducer, assignTo(state))(state));
         return pipe(...reducersChain)(state);
-    }
+    };
 }

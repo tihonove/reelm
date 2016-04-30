@@ -1,6 +1,6 @@
-import { effectType } from './effects'
-import { first } from './utils/self-made-actions-observable'
-import { effectsToGenerator } from './utils/effects-utils'
+import { effectType } from './effects';
+import { first } from './utils/self-made-actions-observable';
+import { effectsToGenerator } from './utils/effects-utils';
 
 class Task {
     constructor(promiseObject) {
@@ -33,32 +33,31 @@ async function processPlainSideEffect(effect, dispatch, getState, actionObservab
     }
     if (effect.type === effectType.JOIN) {
         return effect.task.join();
-    } 
-    if (effect.type === effectType.NOOP) {
-        return;
     }
-    throw "Uncatched side effect: " + JSON.stringify(effect);
+    if (effect.type === effectType.NOOP) {
+        return undefined;
+    }
+    throw `Uncatched side effect: ${JSON.stringify(effect)}`;
 }
 
 async function runEffectGenerator(effect, dispatch, getState, actionObservable) {
-    var generator = effectsToGenerator(effect)();
+    const generator = effectsToGenerator(effect)();
     if (generator.then) {
         return await generator;
     }
 
-    var next = generator.next();
-    var nextArgument;
-    while(true) {
-        if (next.done)
-            return next.value;
+    let next = generator.next();
+    let nextArgument;
+    while (!next.done) {
         try {
             nextArgument = await processPlainSideEffect(next.value, dispatch, getState, actionObservable);
-            next = generator.next(nextArgument)
+            next = generator.next(nextArgument);
         }
-        catch(e) {
-            next = generator.throw(e);
-        }        
+        catch (exception) {
+            next = generator.throw(exception);
+        }
     }
+    return next.value;
 }
 
 export default runEffectGenerator;

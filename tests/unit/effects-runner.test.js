@@ -1,15 +1,14 @@
-import { put, call, map } from '../../src/effects'
-import runEffect from '../../src/effects-runner'
+import { put, call, map } from '../../src/effects';
+import runEffect from '../../src/effects-runner';
 
-const returnAfter = (tm, v) => new Promise(r => setTimeout(r, tm, v));
-const rejectAfter = (tm, v) => new Promise((_, r) => setTimeout(r, tm, v));
+const returnAfter = (tm, value) => new Promise(x => setTimeout(x, tm, value));
+const rejectAfter = (tm, value) => new Promise((_, x) => setTimeout(x, tm, value));
 
-describe("EffectRunner", () => {
+describe('EffectRunner', () => {
+    ait('should process put effect in generator', async () => {
+        const dispatch = jasmine.createSpy('dispatch');
 
-    ait("should process put effect in generator", async () => {
-        var dispatch = jasmine.createSpy('dispatch');
-
-        var effect = function *() {
+        const effect = function* () {
             yield put({ type: 'Action' });
         };
 
@@ -18,14 +17,14 @@ describe("EffectRunner", () => {
         expect(dispatch.calls.allArgs()).toEqual([
             [{ type: 'Action' }],
         ]);
-    })
+    });
 
-    ait("should process put nested call generator", async () => {
-        var dispatch = jasmine.createSpy('dispatch');
+    ait('should process put nested call generator', async () => {
+        const dispatch = jasmine.createSpy('dispatch');
 
-        var effect = function *() {
-            yield call(function *() { 
-                yield put({ type: 'Action' })
+        const effect = function* () {
+            yield call(function* () {
+                yield put({ type: 'Action' });
             });
         };
 
@@ -34,147 +33,147 @@ describe("EffectRunner", () => {
         expect(dispatch.calls.allArgs()).toEqual([
             [{ type: 'Action' }],
         ]);
-    })
+    });
 
-    ait("should process catch exceptions in nested call", async () => {
-        var dispatch = jasmine.createSpy('dispatch');
-        var catchedException = null;
+    ait('should process catch exceptions in nested call', async () => {
+        const dispatch = jasmine.createSpy('dispatch');
+        const catchedException = null;
 
-        var effect = function *() {
+        const effect = function* () {
             try {
-                yield call(function *() { 
-                    throw "error"
-                });            
+                yield call(function* () {
+                    throw 'error';
+                });
             }
-            catch(e) {
-                catchedException = e;
+            catch (error) {
+                catchedException = error;
             }
         };
 
         await runEffect(effect, dispatch);
 
-        expect(catchedException).toEqual("error");
-    })
-    
-    ait("should return value from call effect", async () => {
-        var dispatch = jasmine.createSpy('dispatch');
-        var returnValue = null;
+        expect(catchedException).toEqual('error');
+    });
 
-        var effect = function *() {
-            returnValue = yield call(function *() { 
-                return "value";
-            });            
-        };
+    ait('should return value from call effect', async () => {
+        const dispatch = jasmine.createSpy('dispatch');
+        const returnValue = null;
 
-        await runEffect(effect, dispatch);
-
-        expect(returnValue).toEqual("value");
-    })
-
-    ait("should process promises in call", async () => {
-        var dispatch = jasmine.createSpy('dispatch');
-        var returnValue = null;
-
-        var effect = function *() {
-            returnValue = yield call(async function () { 
-                return await returnAfter(10, "value");
+        const effect = function* () {
+            returnValue = yield call(function* () {
+                return 'value';
             });
         };
 
         await runEffect(effect, dispatch);
 
-        expect(returnValue).toEqual("value");
-    })
+        expect(returnValue).toEqual('value');
+    });
 
-    ait("should catch exceptions in promises in call", async () => {
-        var dispatch = jasmine.createSpy('dispatch');
-        var catchedException = null;
+    ait('should process promises in call', async () => {
+        const dispatch = jasmine.createSpy('dispatch');
+        const returnValue = null;
 
-        var effect = function *() {
+        const effect = function* () {
+            returnValue = yield call(async function () {
+                return await returnAfter(10, 'value');
+            });
+        };
+
+        await runEffect(effect, dispatch);
+
+        expect(returnValue).toEqual('value');
+    });
+
+    ait('should catch exceptions in promises in call', async () => {
+        const dispatch = jasmine.createSpy('dispatch');
+        const catchedException = null;
+
+        const effect = function* () {
             try {
-                yield call(async function () { 
-                    await rejectAfter(10, "error");
-                });            
+                yield call(async function () {
+                    await rejectAfter(10, 'error');
+                });
             }
-            catch(e) {
-                catchedException = e;
+            catch (error) {
+                catchedException = error;
             }
         };
 
         await runEffect(effect, dispatch);
 
-        expect(catchedException).toEqual("error");
-    })
+        expect(catchedException).toEqual('error');
+    });
 
-    ait("should catch exceptions in promises in call when mapped", async () => {
-        var dispatch = jasmine.createSpy('dispatch');
-        var catchedException = null;
+    ait('should catch exceptions in promises in call when mapped', async () => {
+        const dispatch = jasmine.createSpy('dispatch');
+        const catchedException = null;
 
-        var effect = function *() {
+        const effect = function* () {
             try {
-                yield { type: 'WillBeMapped' }
+                yield { type: 'WillBeMapped' };
             }
-            catch(e) {
-                catchedException = e;
+            catch (error) {
+                catchedException = error;
             }
         };
-        var mappedEffect = effect::map(x => 
+        const mappedEffect = effect::map(x =>
             (x.type === 'WillBeMapped')
-                ? call(async function () { await rejectAfter(10, "error"); })
-                : x);
+                ? call(async () => await rejectAfter(10, 'error'))
+                : x
+        );
         await runEffect(mappedEffect, dispatch);
 
-        expect(catchedException).toEqual("error");
-    })
-    
-    ait("should catch exceptions in promises in call via multiple maps", async () => {
-        var dispatch = jasmine.createSpy('dispatch');
-        var catchedException = null;
+        expect(catchedException).toEqual('error');
+    });
 
-        var effect = function *() {
+    ait('should catch exceptions in promises in call via multiple maps', async () => {
+        const dispatch = jasmine.createSpy('dispatch');
+        const catchedException = null;
+
+        const effect = function* () {
             try {
-                yield call((function *() {
-                    yield call((function * () {
-                        yield call(async function () { await rejectAfter(10, "error"); });
-                    })::map(x => x))
-                })::map(x => x)::map(x => x))
+                yield call((function* () {
+                    yield call((function* () {
+                        yield call(async () => await rejectAfter(10, 'error'));
+                    })::map(x => x));
+                })::map(x => x)::map(x => x));
             }
-            catch(e) {
-                catchedException = e;
+            catch (error) {
+                catchedException = error;
             }
         };
         await runEffect(effect, dispatch);
 
-        expect(catchedException).toEqual("error");
-    })
+        expect(catchedException).toEqual('error');
+    });
 
-    ait("should catch exceptions in promises in different levels", async () => {
-        var dispatch = jasmine.createSpy('dispatch');
-        var catchedExceptionInner = null;
-        var catchedExceptionOuter = null;
+    ait('should catch exceptions in promises in different levels', async () => {
+        const dispatch = jasmine.createSpy('dispatch');
+        const catchedExceptionInner = null;
+        const catchedExceptionOuter = null;
 
-        var effect = function *() {
+        const effect = function* () {
             try {
-                yield call((function *() {
+                yield call((function* () {
                     try {
-                        yield call((function * () {
-                            yield call(async function () { await rejectAfter(10, "inner-error"); });
-                        })::map(x => x))
+                        yield call((function* () {
+                            yield call(async () => await rejectAfter(10, 'inner-error'));
+                        })::map(x => x));
                     }
-                    catch(e) {
-                        catchedExceptionInner = e;
-                        throw "outer-error";
+                    catch (error) {
+                        catchedExceptionInner = error;
+                        throw 'outer-error';
                     }
-                })::map(x => x))
+                })::map(x => x));
             }
-            catch(e) {
-                catchedExceptionOuter = e;
+            catch (error) {
+                catchedExceptionOuter = error;
             }
         };
         await runEffect(effect, dispatch);
 
-        expect(catchedExceptionInner).toEqual("inner-error");
-        expect(catchedExceptionOuter).toEqual("outer-error");
-    })
-
-})
+        expect(catchedExceptionInner).toEqual('inner-error');
+        expect(catchedExceptionOuter).toEqual('outer-error');
+    });
+});

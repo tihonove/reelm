@@ -1,1 +1,7 @@
-global.ait = (spec, fn) => it(spec, (done) => fn().then(done, e => { fail(e); done() }));
+global.ait = (spec, fn) =>
+    it(spec, done => {
+        return fn().then(done, error => {
+            fail(error);
+            done();
+        });
+    });

@@ -1,0 +1,15 @@
+{
+    "extends": [
+        "./eslint-config/index.js",
+        "plugin:jasmine/recommended"
+    ],
+    "plugins": [
+        "jasmine"
+    ],
+    "globals": {
+        "ait": false,
+        "done": false,
+        "fail": false,
+        "jasmine": false
+    }
+}
