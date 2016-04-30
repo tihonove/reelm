@@ -37,7 +37,7 @@ describe('EffectRunner', () => {
 
     ait('should process catch exceptions in nested call', async () => {
         const dispatch = jasmine.createSpy('dispatch');
-        const catchedException = null;
+        let catchedException = null;
 
         const effect = function* () {
             try {
@@ -57,7 +57,7 @@ describe('EffectRunner', () => {
 
     ait('should return value from call effect', async () => {
         const dispatch = jasmine.createSpy('dispatch');
-        const returnValue = null;
+        let returnValue = null;
 
         const effect = function* () {
             returnValue = yield call(function* () {
@@ -72,7 +72,7 @@ describe('EffectRunner', () => {
 
     ait('should process promises in call', async () => {
         const dispatch = jasmine.createSpy('dispatch');
-        const returnValue = null;
+        let returnValue = null;
 
         const effect = function* () {
             returnValue = yield call(async function () {
@@ -87,7 +87,7 @@ describe('EffectRunner', () => {
 
     ait('should catch exceptions in promises in call', async () => {
         const dispatch = jasmine.createSpy('dispatch');
-        const catchedException = null;
+        let catchedException = null;
 
         const effect = function* () {
             try {
@@ -107,7 +107,7 @@ describe('EffectRunner', () => {
 
     ait('should catch exceptions in promises in call when mapped', async () => {
         const dispatch = jasmine.createSpy('dispatch');
-        const catchedException = null;
+        let catchedException = null;
 
         const effect = function* () {
             try {
@@ -129,7 +129,7 @@ describe('EffectRunner', () => {
 
     ait('should catch exceptions in promises in call via multiple maps', async () => {
         const dispatch = jasmine.createSpy('dispatch');
-        const catchedException = null;
+        let catchedException = null;
 
         const effect = function* () {
             try {
@@ -150,8 +150,8 @@ describe('EffectRunner', () => {
 
     ait('should catch exceptions in promises in different levels', async () => {
         const dispatch = jasmine.createSpy('dispatch');
-        const catchedExceptionInner = null;
-        const catchedExceptionOuter = null;
+        let catchedExceptionInner = null;
+        let catchedExceptionOuter = null;
 
         const effect = function* () {
             try {
