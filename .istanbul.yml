@@ -4,4 +4,4 @@ instrumentation:
         - .js
     default-excludes: true
     excludes:
-        - 'lib/*'
+        - 'lib/**/*.js'
