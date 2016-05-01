@@ -21,6 +21,13 @@ describe('Public interface', () => {
         expect(indexFunctions.over).toBeFunction();
         expect(indexFunctions.scoped).toBeFunction();
 
+        expect(Object.keys(indexFunctions.spoiled)).toHaveSameItems([
+            'split',
+            'isSpoiled',
+            'extractState',
+            'extractEffects',
+        ], true);
+
         expect(indexFunctions.spoiled.split).toBeFunction();
         expect(indexFunctions.spoiled.isSpoiled).toBeFunction();
         expect(indexFunctions.spoiled.extractState).toBeFunction();
@@ -59,5 +66,19 @@ describe('Public interface', () => {
 
         expect(fluentFunctions.defineReducer).toBeFunction();
         expect(fluentFunctions.perform).toBeFunction();
+
+        const defineReducerInst = fluentFunctions.defineReducer({});
+
+        expect(Object.keys(defineReducerInst)).toHaveSameItems([
+            'on',
+            'scopedOver',
+            'always',
+            'mapEffects',
+        ], true);
+
+        expect(defineReducerInst.on).toBeFunction();
+        expect(defineReducerInst.scopedOver).toBeFunction();
+        expect(defineReducerInst.always).toBeFunction();
+        expect(defineReducerInst.mapEffects).toBeFunction();
     });
 });
