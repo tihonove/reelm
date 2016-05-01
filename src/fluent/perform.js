@@ -1,4 +1,4 @@
-import { spoiled } from '../utils/spoiled-state-utils';
+import spoiled from '../spoiled';
 
 export default function perform(effects) {
     return function reducerWithEffectOnly(state) {

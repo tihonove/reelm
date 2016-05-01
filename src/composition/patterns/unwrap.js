@@ -1,4 +1,4 @@
-import compilePattern from './compilePattern';
+import compilePattern from './compile-pattern';
 import * as Utils from './utils';
 
 /**
@@ -33,7 +33,11 @@ export default pattern => {
         match = compiledPattern
             .chunks
             .filter(current => current.dynamic)
-            .reduce((memo, current, index) => ({ ...memo, [current.name]: regExpMatch[index] }), {});
+            .reduce(
+                (memo, current, index) => ({
+                    ...memo, [current.name]:
+                    regExpMatch[index],
+                }), {});
 
         return {
             ...action,

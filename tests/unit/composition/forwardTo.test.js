@@ -58,4 +58,21 @@ describe('forwardTo', () => {
             .toEqual([[{ type: 'Type1.Type2.Action', value: 'value' }]]);
         dispatch.calls.reset();
     });
+
+    it('should forward to same action if no types provided', () => {
+        const dispatch = jasmine.createSpy('dispatch');
+
+        const action = { type: 'Action', value: 'value' };
+        forwardTo(dispatch)(action);
+
+        expect(dispatch.calls.allArgs())
+            .toEqual([[{ type: 'Action', value: 'value' }]]);
+    });
+
+    it('should forward to dispatch itself if no types provided', () => {
+        const dispatch = jasmine.createSpy('dispatch');
+
+        const forwarDispatch = forwardTo(dispatch);
+        expect(forwarDispatch).toBe(dispatch);
+    });
 });

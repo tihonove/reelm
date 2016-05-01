@@ -5,7 +5,7 @@ export default function conditional(pattern) {
 
     return function conditionalReducerWrapper(reducer) {
         return function conditionalReducer(state, action) {
-            if (!action) {
+            if (!action || action.type === undefined) {
                 return state;
             }
             const unwrappedAction = compiledUnwrap(action);

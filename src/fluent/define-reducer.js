@@ -12,7 +12,10 @@ export default function defineReducer(initialState) {
 
     const resultReducer = (state = initialState, action) => {
         if (!composedReducer) {
-            composedReducer = pipe(pipeReducers(...updaters), overEffects(pipe(...effectSelectors)));
+            composedReducer = pipe(
+                pipeReducers(...updaters),
+                overEffects(pipe(...effectSelectors))
+            );
         }
 
         if (!action) {
@@ -31,14 +34,16 @@ export default function defineReducer(initialState) {
         return resultReducer;
     };
 
-    resultReducer.scopeTo = (pattern, stateSubSetDefinition, reducer) => {
-        if (typeof stateSubSetDefinition === 'function') {
+    resultReducer.scopeTo = (pattern, lensDefintion, reducer) => {
+        if (typeof lensDefintion === 'function') {
             updaters.push(scoped(pattern)((state, action) => {
-                return over(stateSubSetDefinition(action.match))(reducer)(state, action);
+                const overReducer =
+                    over(lensDefintion(action.match))(reducer);
+                return overReducer(state, action);
             }));
         }
         else {
-            updaters.push(scoped(pattern)(over(stateSubSetDefinition)(reducer)));
+            updaters.push(scoped(pattern)(over(lensDefintion)(reducer)));
         }
         return resultReducer;
     };

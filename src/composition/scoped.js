@@ -13,7 +13,7 @@ function scopedEffectsTransformer(compiledUnwrap, pattern, match) {
     return effects =>
         effects
             ::map(convertPuts(pattern, match))
-            ::map(convertTakes(compiledUnwrap, pattern));
+            ::map(convertTakes(compiledUnwrap, pattern, match));
 }
 
 function convertPuts(pattern, match) {
@@ -41,7 +41,9 @@ function keysEquals(obj1 = {}, obj2 = {}) {
 function createTakeOrUndefined(compiledUnwrap, pattern, match) {
     return function effectSelector(action) {
         const unwrappedAction = compiledUnwrap(action);
-        if (unwrappedAction && (unwrappedAction.type !== '' || action.type === pattern)) {
+        const matches = unwrappedAction &&
+            (unwrappedAction.type !== '' || action.type === pattern);
+        if (matches) {
             if (keysEquals(unwrappedAction.match[pattern], match)) {
                 return unwrappedAction;
             }
@@ -50,8 +52,9 @@ function createTakeOrUndefined(compiledUnwrap, pattern, match) {
     };
 }
 
-function convertTakes(compiledUnwrap, pattern) {
-    const takeOrUndefined = createTakeOrUndefined(compiledUnwrap, pattern);
+function convertTakes(compiledUnwrap, pattern, match) {
+    const takeOrUndefined = createTakeOrUndefined(
+        compiledUnwrap, pattern, match);
     return function effectSelector(sideEffect) {
         if (sideEffect.type === effectType.TAKE) {
             const oldCondition = sideEffect.condition;
@@ -67,23 +70,37 @@ function convertTakes(compiledUnwrap, pattern) {
     };
 }
 
+function isGloablAction(action) {
+    return action.type && action.type.startsWith('@@');
+}
+
 export default function scoped(pattern) {
     const compiledUnwrap = unwrap(pattern);
 
     return function reducerWrapper(reducer) {
         return (state, action) => {
             const unwrappedAction = compiledUnwrap(action);
+            const matches = unwrappedAction &&
+                (unwrappedAction.type || action.type === pattern);
 
-            if (unwrappedAction && (unwrappedAction.type || action.type === pattern)) {
+            if (matches) {
+                const scopedAction = {
+                    ...unwrappedAction,
+                    match: unwrappedAction.match[pattern],
+                };
+                const trasformEffects = scopedEffectsTransformer(
+                    compiledUnwrap, pattern, unwrappedAction.match[pattern]);
                 return compose(
-                    overEffects(scopedEffectsTransformer(compiledUnwrap, pattern, unwrappedAction.match[pattern])),
-                    x => reducer(x, { ...unwrappedAction, match: unwrappedAction.match[pattern] })
+                    overEffects(trasformEffects),
+                    state => reducer(state, scopedAction)
                 )(state);
             }
-            else if (action.type.startsWith('@@') && !isDynamicPattern(pattern)) {
+            else if (isGloablAction(action) && !isDynamicPattern(pattern)) {
+                const trasformEffects = scopedEffectsTransformer(
+                    compiledUnwrap, pattern, {});
                 return compose(
-                    overEffects(scopedEffectsTransformer(compiledUnwrap, pattern, {})),
-                    x => reducer(x, action)
+                    overEffects(trasformEffects),
+                    state => reducer(state, action)
                 )(state);
             }
             return state;

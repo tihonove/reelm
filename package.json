@@ -11,8 +11,8 @@
     "test": "jasmine JASMINE_CONFIG_PATH=jasmine.json",
     "lint": "eslint src tests",
     "lint-file": "eslint",
-    "lint-fix": "eslint --fix",
     "cover": "istanbul cover ./node_modules/jasmine/bin/jasmine.js JASMINE_CONFIG_PATH=jasmine.json",
+    "cover-local": "istanbul cover --report json --report html ./node_modules/jasmine/bin/jasmine.js JASMINE_CONFIG_PATH=jasmine.json",
     "report-coverage": "cat ./coverage/lcov.info | node ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
   },
   "devDependencies": {
@@ -27,10 +27,12 @@
     "eslint-plugin-babel": "^3.2.0",
     "eslint-plugin-jasmine": "^1.8.1",
     "eslint-plugin-react": "^5.0.1",
+    "immutable": "^3.8.1",
     "istanbul": "^1.0.0-alpha.2",
     "jasmine": "^2.4.1",
     "jasmine-collection-matchers": "^0.2.0",
     "jasmine-expect": "^2.0.2",
+    "jasmine-immutable-matchers": "^1.0.1",
     "redux": "^3.5.2",
     "rimraf": "^2.5.2",
     "webpack": "^1.12.14"

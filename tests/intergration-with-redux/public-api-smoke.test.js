@@ -4,9 +4,9 @@ import { createStore } from 'redux';
 import {
     reelmRunner,
     pipeReducers,
-    over,
-    scoped,
-    conditional,
+    //over,
+    //scoped,
+    //conditional,
 } from '../../index';
 
 import {
@@ -41,7 +41,9 @@ describe('Public interface', () => {
     });
 
     it('should contain pipeReducers', async () => {
-        const reducer = jasmine.createSpy('reducer').and.callFake(state => state);
+        const reducer = jasmine
+        .createSpy('reducer')
+        .and.callFake(state => state);
 
         const pipedReducer = pipeReducers(reducer);
 

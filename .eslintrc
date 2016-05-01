@@ -10,6 +10,7 @@
         "ait": false,
         "done": false,
         "fail": false,
-        "jasmine": false
+        "jasmine": false,
+        "spyOn": false
     }
 }

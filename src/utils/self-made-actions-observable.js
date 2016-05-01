@@ -15,17 +15,22 @@ class SubscriptionObserver extends Subscription {
     }
 
     next(value) {
-        this.observer.next(value);
+        if (typeof this.observer.next === 'function') {
+            this.observer.next(value);
+        }
     }
 
     error(errorValue) {
-        this.observer.error(errorValue);
+        if (typeof this.observer.error === 'function') {
+            this.observer.error(errorValue);
+        }
     }
 
     complete(completeValue) {
-        this.observer.complete(completeValue);
+        if (typeof this.observer.complete === 'function') {
+            this.observer.complete(completeValue);
+        }
     }
-
 }
 
 export default class SelfMadeActionsObservable {
@@ -34,19 +39,44 @@ export default class SelfMadeActionsObservable {
     }
 
     notify(action) {
-        for (const subscription of this.subscriptions) {
-            subscription.next(action);
+        if (this.subscriptions) {
+            for (const subscription of this.subscriptions) {
+                subscription.next(action);
+            }
+        }
+    }
+
+    close(result) {
+        if (this.subscriptions) {
+            for (const subscription of this.subscriptions) {
+                subscription.complete(result);
+            }
+            this.subscriptions = undefined;
+        }
+    }
+
+    throw(error) {
+        if (this.subscriptions) {
+            for (const subscription of this.subscriptions) {
+                subscription.error(error);
+            }
+            this.subscriptions = undefined;
         }
     }
 
     unsubscribe(subscription) {
-        this.subscriptions.delete(subscription);
+        if (this.subscriptions) {
+            this.subscriptions.delete(subscription);
+        }
     }
 
     subscribe(observer) {
-        const subscription = new SubscriptionObserver(this, observer);
-        this.subscriptions.add(subscription);
-        return subscription;
+        if (this.subscriptions) {
+            const subscription = new SubscriptionObserver(this, observer);
+            this.subscriptions.add(subscription);
+            return subscription;
+        }
+        return undefined;
     }
 
     [Symbol.observable]() {
@@ -54,7 +84,7 @@ export default class SelfMadeActionsObservable {
     }
 }
 
-export function first(condition) {
+export function first(condition = () => true) {
     /* eslint-disable no-invalid-this */
     return new Promise((resolve, reject) => {
         const subscription = this.subscribe({

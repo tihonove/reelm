@@ -1,6 +1,5 @@
 export reelmRunner from './reelm-runner';
-
-export { spoiled } from './utils/spoiled-state-utils';
+export spoiled from './spoiled';
 
 export { pipeReducers } from './utils/reducer-utils';
 
