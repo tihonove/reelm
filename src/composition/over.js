@@ -1,4 +1,4 @@
-import { effectType } from '../effects';
+import { effectType } from '../effect-creators';
 
 import { mapIf } from '../map-effects';
 import { compose, overState, overEffects } from '../utils/reducer-utils';

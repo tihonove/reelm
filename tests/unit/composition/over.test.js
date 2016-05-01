@@ -1,4 +1,4 @@
-import { effectType, select } from '../../../src/effects';
+import { effectType, select } from '../../../src/effect-creators';
 import over from '../../../src/composition/over';
 import spoiled from '../../../src/spoiled';
 

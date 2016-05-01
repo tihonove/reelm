@@ -1,6 +1,6 @@
 import unwrap from './patterns/unwrap';
 import wrap from './patterns/wrap';
-import { effectType } from '../effects';
+import { effectType } from '../effect-creators';
 
 import { map } from '../map-effects';
 import { overEffects, compose } from '../utils/reducer-utils';

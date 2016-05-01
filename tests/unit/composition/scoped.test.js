@@ -1,4 +1,4 @@
-import { effectType, put, take } from '../../../src/effects';
+import { effectType, put, take } from '../../../src/effect-creators';
 import scoped from '../../../src/composition/scoped';
 import spoiled from '../../../src/spoiled';
 

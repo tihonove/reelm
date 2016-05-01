@@ -34,7 +34,7 @@ export default function defineReducer(initialState) {
         return resultReducer;
     };
 
-    resultReducer.scopeTo = (pattern, lensDefintion, reducer) => {
+    resultReducer.scopedOver = (pattern, lensDefintion, reducer) => {
         if (typeof lensDefintion === 'function') {
             updaters.push(scoped(pattern)((state, action) => {
                 const overReducer =

@@ -10,7 +10,6 @@
     "prepublish": "npm run compile",
     "test": "jasmine JASMINE_CONFIG_PATH=jasmine.json",
     "lint": "eslint src tests",
-    "lint-file": "eslint",
     "cover": "istanbul cover ./node_modules/jasmine/bin/jasmine.js JASMINE_CONFIG_PATH=jasmine.json",
     "cover-local": "istanbul cover --report json --report html ./node_modules/jasmine/bin/jasmine.js JASMINE_CONFIG_PATH=jasmine.json",
     "report-coverage": "cat ./coverage/lcov.info | node ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"

@@ -1,5 +1,7 @@
-import { put, call, map } from '../../src/effects';
+import { noop, take, select, fork, join, put, call } from '../../src/effect-creators';
+import { map } from '../../src/map-effects';
 import runEffect from '../../src/effects-runner';
+import ActionsObservable from '../../src/utils/self-made-actions-observable';
 
 function mapIf(condition, func) {
     /* eslint-disable no-invalid-this */
@@ -7,6 +9,7 @@ function mapIf(condition, func) {
     /* eslint-enable no-invalid-this */
 }
 
+const nextTick = () => new Promise(x => setTimeout(x, 0));
 const returnAfter = (tm, value) =>
     new Promise(x => setTimeout(x, tm, value));
 const rejectAfter = (tm, value) =>
@@ -306,5 +309,137 @@ describe('EffectRunner', () => {
 
         expect(result1).toEqual('value1');
         expect(result2).toEqual('value2');
+    });
+
+    ait('should process fork asynchronously', async () => {
+        const dispatch = jasmine.createSpy('dispatch');
+
+        const effect = function* () {
+            const task = yield fork(function* () {
+                yield call(async () => returnAfter(10));
+                yield put({ type: 'ActionInFork' });
+            });
+            yield put({ type: 'Action' });
+            yield join(task);
+            yield put({ type: 'ActionAfterJoin' });
+        };
+        await runEffect(effect, dispatch);
+
+        expect(dispatch.calls.allArgs()).toEqual([
+            [{ type: 'Action' }],
+            [{ type: 'ActionInFork' }],
+            [{ type: 'ActionAfterJoin' }],
+        ]);
+    });
+
+    ait('should return value on select state', async () => {
+        const dispatch = jasmine.createSpy('dispatch');
+        const getState = jasmine
+            .createSpy('getState')
+            .and.callFake(() => 'value');
+        let selectedState = null;
+
+        const effect = function* () {
+            selectedState = yield select();
+        };
+        await runEffect(effect, dispatch, getState);
+
+        expect(getState).toHaveBeenCalled();
+        expect(selectedState).toEqual('value');
+    });
+
+    ait('should do nothing on noop', async () => {
+        const dispatch = jasmine.createSpy('dispatch');
+        const getState = jasmine
+            .createSpy('getState')
+            .and.callFake(() => 'value');
+
+        const effect = function* () {
+            yield noop();
+        };
+        await runEffect(effect, dispatch, getState);
+
+        expect(getState.calls.any()).toBeFalsy();
+        expect(dispatch.calls.any()).toBeFalsy();
+    });
+
+    ait('should process take by type', async () => {
+        const actionObservable = new ActionsObservable();
+        let actionTaken = false;
+
+        const effect = function* () {
+            yield take('Action');
+            actionTaken = true;
+        };
+        const runEffectPromise = runEffect(effect, null, null, actionObservable);
+
+        actionObservable.notify({ type: 'OtherAction' });
+        await returnAfter(10);
+        expect(actionTaken).toBeFalsy();
+
+        actionObservable.notify({ type: 'Action' });
+        await returnAfter(10);
+        expect(actionTaken).toBeTruthy();
+
+        await runEffectPromise;
+    });
+
+    ait('should process take by regex', async () => {
+        const actionObservable = new ActionsObservable();
+        const takenActions = [];
+
+        const effect = function* () {
+            // eslint-disable-next-line no-constant-condition
+            while (true) {
+                const action = yield take(/^(The)?Action$/i);
+                takenActions.push(action);
+            }
+        };
+        runEffect(effect, null, null, actionObservable);
+
+        // TODO: to pass `await nextTick()` is mandatory. Is this problem?
+        actionObservable.notify({ type: 'TheAction' });
+        await nextTick();
+        actionObservable.notify({ type: 'Action' });
+        await nextTick();
+        actionObservable.notify({ type: 'AnAction' });
+        await nextTick();
+        actionObservable.notify({ type: 'THeACtIon' });
+
+        await returnAfter(10);
+        expect(takenActions).toEqual([
+            { type: 'TheAction' },
+            { type: 'Action' },
+            { type: 'THeACtIon' },
+        ]);
+    });
+
+    ait('should process take by regex', async () => {
+        const actionObservable = new ActionsObservable();
+        const takenActions = [];
+
+        const effect = function* () {
+            // eslint-disable-next-line no-constant-condition
+            while (true) {
+                const action = yield take(['TheAction', 'Action']);
+                takenActions.push(action);
+            }
+        };
+        runEffect(effect, null, null, actionObservable);
+
+        // TODO: to pass `await nextTick()` is mandatory. Is this problem?
+        actionObservable.notify({ type: 'TheAction' });
+        await nextTick();
+        actionObservable.notify({ type: 'Action' });
+        await nextTick();
+        actionObservable.notify({ type: 'AnAction' });
+        await nextTick();
+        actionObservable.notify({ type: 'THeACtIon' });
+
+        await returnAfter(10);
+        expect(takenActions).toEqual([
+            { type: 'TheAction' },
+            { type: 'Action' },
+        ]);
     });
 });

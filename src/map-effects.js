@@ -1,4 +1,4 @@
-import { effectType } from '../effects';
+import { effectType } from './effect-creators';
 import { effectsToGenerator } from './utils/effects-utils';
 
 function isCompositeEffect(plainEffect) {

@@ -1,4 +1,4 @@
-import { effectType } from './effects';
+import { effectType } from './effect-creators';
 import { first } from './utils/self-made-actions-observable';
 import { effectsToGenerator } from './utils/effects-utils';
 
