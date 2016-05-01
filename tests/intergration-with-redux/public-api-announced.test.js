@@ -15,12 +15,16 @@ describe('Public interface', () => {
         ], true);
 
         expect(indexFunctions.reelmRunner).toBeFunction();
-        expect(indexFunctions.spoiled).toBeFunction();
         expect(indexFunctions.pipeReducers).toBeFunction();
         expect(indexFunctions.forwardTo).toBeFunction();
         expect(indexFunctions.conditional).toBeFunction();
         expect(indexFunctions.over).toBeFunction();
         expect(indexFunctions.scoped).toBeFunction();
+
+        expect(indexFunctions.spoiled.split).toBeFunction();
+        expect(indexFunctions.spoiled.isSpoiled).toBeFunction();
+        expect(indexFunctions.spoiled.extractState).toBeFunction();
+        expect(indexFunctions.spoiled.extractEffects).toBeFunction();
     });
 
     it('should have effects that contains announced funcitons', () => {
