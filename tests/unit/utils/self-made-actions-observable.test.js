@@ -119,6 +119,15 @@ describe('SelfMadeActionsObservable', () => {
         ]);
     });
 
+    it('should not throw if no error in observer', () => {
+        const observer = {};
+
+        const observable = new SelfMadeActionsObservable();
+        observable.subscribe(observer);
+
+        observable.throw('value 1');
+    });
+
     it('should not call error twice', () => {
         const observer = { error: x => x };
         spyOn(observer, 'error').and.stub();

@@ -1,4 +1,5 @@
-import { noop, take, select, fork, join, put, call } from '../../src/effect-creators';
+import { noop, take, select, fork, join, put, call }
+    from '../../src/effect-creators';
 import { map } from '../../src/map-effects';
 import runEffect from '../../src/effects-runner';
 import ActionsObservable from '../../src/utils/self-made-actions-observable';
@@ -371,7 +372,8 @@ describe('EffectRunner', () => {
             yield take('Action');
             actionTaken = true;
         };
-        const runEffectPromise = runEffect(effect, null, null, actionObservable);
+        const runEffectPromise = runEffect(
+            effect, null, null, actionObservable);
 
         actionObservable.notify({ type: 'OtherAction' });
         await returnAfter(10);
