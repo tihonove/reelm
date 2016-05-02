@@ -34,5 +34,13 @@ npm install
 npm start
 ```
 
+### Data editor with confim dialog
+
+```
+cd 03_data_editor_with_confirm
+npm install
+npm start
+```
+
 ### ...More example
 WIP
