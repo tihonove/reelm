@@ -1,6 +1,6 @@
 {
     "extends": [
-        "./eslint-config/index.js",
+        "skbkontur-retail",
         "plugin:jasmine/recommended"
     ],
     "plugins": [
