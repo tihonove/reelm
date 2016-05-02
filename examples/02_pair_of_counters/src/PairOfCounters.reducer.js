@@ -1,7 +1,10 @@
-import { defineReducer } from 'reelm/composition'
+import { defineReducer } from 'reelm/fluent';
 
-import counterReducer from '../../01_counter/src/Counter.reducer'
+import counterReducer from '../../01_counter/src/Counter.reducer';
+
+export const FirstCounter = 'FirstCounter';
+export const SecondCounter = 'SecondCounter';
 
 export default defineReducer({})
-    .scopeTo('FirstCounter', ['firstCounter'], counterReducer)
-    .scopeTo('SecondCounter', ['secondCounter'], counterReducer)
+    .scopedOver(FirstCounter, ['firstValue'], counterReducer)
+    .scopedOver(SecondCounter, ['secondValue'], counterReducer);
