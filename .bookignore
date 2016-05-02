@@ -1,0 +1,7 @@
+src/
+lib/
+examples/
+package.json
+.babelrc
+.npmignore
+*.js
