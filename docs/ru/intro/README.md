@@ -167,7 +167,7 @@ npm install reelm --save
 Начнём с personReducer'а и перепишем его при помощи конструкции defineReducer:
 
 ```javascript
-import { defineReducer } from 'reelm/composition'
+import { defineReducer } from 'reelm/fluent'
 
 //...
 
@@ -177,19 +177,19 @@ export default defineReducer(initialState)
 
 ```
 
-Композиция reducer'ов в библиотеке Reelm может быть осуществлена при помощи конструкции scopeTo:
+Композиция reducer'ов в библиотеке Reelm может быть осуществлена при помощи конструкции scopedOver:
 
 ```javascript
-import { defineReducer } from 'reelm/composition'
+import { defineReducer } from 'reelm/fluent'
 
 import personReducer from './personReducer'
 
 export const Person = 'Person';
 
 export default defineReducer({})
-    .scopeTo(Person, ['person'], personReducer);
+    .scopedOver(Person, ['person'], personReducer);
 ```
-Первый параметр, принимаемый функцией scopeTo, -- это префикс action'ов, второй -- путь до узла в состоянии на которым будет выполнен reducer, переданный третьим параметром.
+Первый параметр, принимаемый функцией scopedOver, -- это префикс action'ов, второй -- путь до узла в состоянии на которым будет выполнен reducer, переданный третьим параметром.
 
 Теперь упростим код в точке подключения представления к store. На данный момент он выглядит так:
 
@@ -316,8 +316,8 @@ export default defineReducer({})
 
 ```javascript
 export default defineReducer({})
-    .scopeTo(Confirmation, ['confirmation'], confirmationReducer)
-    .scopeTo(Person, ['person'], personReducer)
+    .scopedOver(Confirmation, ['confirmation'], confirmationReducer)
+    .scopedOver(Person, ['person'], personReducer)
     .mapEffects(effect => {
         if (effect.type === 'RequestConfirmation') {
             return call(function* (){
