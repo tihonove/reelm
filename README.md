@@ -1,6 +1,6 @@
 #reelm
 
-[![Travis branch](https://img.shields.io/travis/tihonove/reelm/develop.svg?maxAge=2592000?style=flat-square)](traivs) [![Coveralls branch](https://img.shields.io/coveralls/tihonove/reelm/develop.svg?maxAge=2592000?style=flat-square)](coveralls) [![npm](https://img.shields.io/npm/v/reelm.svg?maxAge=2592000?style=flat-square)](npm)
+[![Travis branch](https://img.shields.io/travis/tihonove/reelm/develop.svg?maxAge=2592000&style=flat-square)](traivs) [![Coveralls branch](https://img.shields.io/coveralls/tihonove/reelm/develop.svg?maxAge=2592000&style=flat-square)](coveralls) [![npm](https://img.shields.io/npm/v/reelm.svg?maxAge=2592000&style=flat-square)](npm)
 
 # Getting started
 
