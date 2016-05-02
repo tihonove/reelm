@@ -1,11 +1,18 @@
 {
     "name": "reelm",
-        "version": "1.0.0-alpha.1",
-        "description": "Awesome library combining redux, saga and elm",
-        "main": "index.js",
-        "author": "tihonove <tihonov.ea@gmail.com>",
-        "license": "WTFPL",
-        "scripts": {
+    "version": "1.0.0-alpha.2",
+    "description": "Awesome library combining redux, saga and elm",
+    "main": "index.js",
+    "author": "tihonove <tihonov.ea@gmail.com>",
+    "contributors": [
+        {
+            "name": "Eugene Tikhonov",
+            "email": "tihonov.ea@gmail.com"
+        }
+    ],
+    "homepage": "https://reelm.github.io/",
+    "license": "WTFPL",
+    "scripts": {
         "compile": "rimraf lib && babel -d lib/ src/",
         "prepublish": "npm run compile",
         "test": "jasmine JASMINE_CONFIG_PATH=jasmine.json",
@@ -28,6 +35,7 @@
         "effects.js",
         "fluent.js"
     ],
+    "dependencies": {},
     "devDependencies": {
         "babel-cli": "^6.7.5",
         "babel-core": "^6.7.6",
@@ -49,5 +57,17 @@
         "redux": "^3.5.2",
         "rimraf": "^2.5.2",
         "webpack": "^1.12.14"
-    }
+    },
+    "engines" : {
+        "node" : "*"
+    },
+    "keywords": [
+        "react",
+        "redux",
+        "saga",
+        "elm",
+        "side effects",
+        "redux side effects management",
+        "javascript"
+    ]
 }
