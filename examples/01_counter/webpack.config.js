@@ -28,7 +28,8 @@ var reelmNodeModules = path.join(__dirname, '..', '..', 'node_modules')
 var fs = require('fs')
 
 if (fs.existsSync(reelmSrc) && fs.existsSync(reelmNodeModules)) {
-    module.exports.resolve = { alias: { 'reelm': reelmSrc } };
+    module.exports.resolve = module.exports.resolve || {};
+    module.exports.resolve.alias = { 'reelm': reelmSrc };
     module.exports.module.loaders.push({
         test: /\.js$/,
         loaders: [ 'babel' ],
