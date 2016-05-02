@@ -3,7 +3,7 @@
   "version": "0.0.5",
   "description": "Awesome library combining redux, saga and elm",
   "main": "index.js",
-  "author": "tihonove",
+  "author": "tihonove <tihonov.ea@gmail.com>",
   "license": "WTFPL",
   "scripts": {
     "compile": "rimraf lib && babel -d lib/ src/",
@@ -14,6 +14,13 @@
     "cover-local": "istanbul cover --report json --report html ./node_modules/jasmine/bin/jasmine.js JASMINE_CONFIG_PATH=jasmine.json",
     "report-coverage": "cat ./coverage/lcov.info | node ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tihonove/reelm.git"
+  },  
+  "bugs": {
+    "url": "https://github.com/tihonove/reelm/issues"
+  },  
   "devDependencies": {
     "babel-cli": "^6.7.5",
     "babel-core": "^6.7.6",
