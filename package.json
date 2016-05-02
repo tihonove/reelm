@@ -20,7 +20,12 @@
     "lintt": "eslint",
     "cover": "istanbul cover ./node_modules/jasmine/bin/jasmine.js JASMINE_CONFIG_PATH=jasmine.json",
     "cover-local": "istanbul cover --report json --report html ./node_modules/jasmine/bin/jasmine.js JASMINE_CONFIG_PATH=jasmine.json",
-    "report-coverage": "cat ./coverage/lcov.info | node ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
+    "report-coverage": "cat ./coverage/lcov.info | node ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
+    "docs:clean": "rimraf docs/_book",
+    "docs:prepare": "cd docs && gitbook install",
+    "docs:build": "npm run docs:prepare && cd docs && gitbook build",
+    "docs:watch": "npm run docs:prepare && cd docs && gitbook serve",
+    "docs:publish": "npm run docs:clean && npm run docs:build && cd docs && cd _book && git init && git commit --allow-empty -m \"update book\" && touch .nojekyll && git add . && git commit -am \"update book\" && git push git@github.com:reelm/reelm.github.io master --force"
   },
   "repository": {
     "type": "git",
