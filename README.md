@@ -34,7 +34,7 @@ npm install
 npm start
 ```
 
-### Data editor with confim dialog
+### Data editor with confirmation dialog
 
 ```
 cd 03_data_editor_with_confirm
