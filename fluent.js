@@ -1,1 +1,1 @@
-module.exports = require('./lib/fluent')
+module.exports = require('./lib/fluent');
