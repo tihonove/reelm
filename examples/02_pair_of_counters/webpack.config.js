@@ -15,16 +15,6 @@ module.exports = {
                 test: /\.jsx?$/,
                 loader: 'babel',
                 exclude: /node_modules/
-            },
-            {
-                test: /\.(c|le)ss$/,
-                exclude: /node_modules/,
-                loader: 'style-loader!css-loader!less-loader'
-            },
-            {
-                test: /\.(woff|woff2|eot|svg|ttf|gif|png)$/,
-                exclude: /node_modules/,
-                loader: 'file-loader'
             }
         ]
     },
