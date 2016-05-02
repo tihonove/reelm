@@ -1,1 +1,1 @@
-module.exports = require('./lib/effects')
+module.exports = require('./lib/effects');

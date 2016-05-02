@@ -1,3 +1,7 @@
+#reelm
+
+[![Travis branch](https://img.shields.io/travis/tihonove/reelm/develop.svg?maxAge=2592000&style=flat)](https://travis-ci.org/tihonove/reelm) [![Coveralls branch](https://img.shields.io/coveralls/tihonove/reelm/develop.svg?maxAge=2592000&style=flat)](https://coveralls.io/github/tihonove/reelm) [![npm](https://img.shields.io/npm/v/reelm.svg?maxAge=2592000&style=flat)](https://www.npmjs.com/package/reelm)
+
 # Getting started
 
 ## Install
@@ -26,6 +30,14 @@ npm start
 
 ```
 cd 02_pair_of_counters
+npm install
+npm start
+```
+
+### Data editor with confim dialog
+
+```
+cd 03_data_editor_with_confirm
 npm install
 npm start
 ```

@@ -1,20 +1,18 @@
-/**
- * Returns modified version of dispatch function. The function automatically prepends
- * composed string reflecting composition of action types.
- *
- * @param {Function} dispatch function
- * @param {...String} Action types which defines action composition
- *
- * @returns {Function} Modified dispatch
- */
+function containsDot(str) {
+    return str.toString().indexOf('.') >= 0;
+}
+
 export default (dispatch, ...types) => {
-  if (types.length === 0) {
-    return dispatch;
-  } else {
-    if (types.some(type => ~type.toString().indexOf('.'))) {
-      throw new Error('Action type can\'t contain dot');
+    if (types.length === 0) {
+        return dispatch;
+    }
+    if (types.some(containsDot)) {
+        throw new Error('Action type can\'t contain dot');
     }
 
-    return action => dispatch({...action, type: `${types.reduce((memo, type) => `${memo}${type}.`, '')}${action.type}`});
-  }
+    const typePrefix = types.join('.');
+    return action => dispatch({
+        ...action,
+        type: `${typePrefix}.${action.type}`,
+    });
 };

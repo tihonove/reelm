@@ -1,0 +1,16 @@
+{
+    "extends": [
+        "skbkontur-retail",
+        "plugin:jasmine/recommended"
+    ],
+    "plugins": [
+        "jasmine"
+    ],
+    "globals": {
+        "ait": false,
+        "done": false,
+        "fail": false,
+        "jasmine": false,
+        "spyOn": false
+    }
+}

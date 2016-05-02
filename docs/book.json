@@ -1,0 +1,17 @@
+{
+  "gitbook": "2.5.2",
+  "plugins": ["prism", "-highlight", "github"],
+  "pluginsConfig": {
+    "github": {
+      "url": "https://github.com/tihonove/reelm"
+    },
+    "sharing": {
+      "facebook": true,
+      "twitter": true,
+      "google": false,
+      "weibo": false,
+      "instapaper": false,
+      "vk": false
+    }
+  }
+}
