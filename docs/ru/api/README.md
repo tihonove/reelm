@@ -1,5 +1,5 @@
 ## Справочник API
-* [`Core api`]
+<!-- * [`Core api`]
     * [`reelmRunner()`](#reelmRunner)
     * [Работа со spsoiledState]
         * [spoiled]
@@ -25,3 +25,4 @@
     fork
     join
     noop
+ -->
