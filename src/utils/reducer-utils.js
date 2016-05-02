@@ -1,33 +1,42 @@
-import { extractState, extractEffects, spoiled, isSpoiledState } from '../utils/spoiled-state-utils'
-import { composeEffects } from '../utils/effects-utils'
+import spoiled from '../spoiled';
+import { composeEffects } from '../utils/effects-utils';
 
-export const assignTo = nextSpoiledState => spoiledState => {
+const assignTo = prevState => nextState => {
+    if (!spoiled.isSpoiled(prevState) && !spoiled.isSpoiled(nextState)) {
+        return nextState;
+    }
     return spoiled(
-        extractState(spoiledState),
-        composeEffects(extractEffects(spoiledState), extractEffects(nextSpoiledState))
+        spoiled.extractState(nextState),
+        composeEffects(
+            spoiled.extractEffects(prevState),
+            spoiled.extractEffects(nextState))
     );
-}
+};
 
-export function lift(stateReducer, effectsReducer) {
- return function (spoiledStateOrState) {
-     if (isSpoiledState(spoiledStateOrState)) {
-         return spoiled(
-             stateReducer(extractState(spoiledStateOrState)),
-             effectsReducer(extractEffects(spoiledStateOrState))
-         );             
-     }    
-     else {
-         return stateReducer(spoiledStateOrState);
-     }
- }    
+function lift(stateReducer, effectsReducer) {
+    return function leftedFunction(spoiledStateOrState) {
+        if (spoiled.isSpoiled(spoiledStateOrState)) {
+            return spoiled(
+                stateReducer(spoiled.extractState(spoiledStateOrState)),
+                effectsReducer(spoiled.extractEffects(spoiledStateOrState))
+            );
+        }
+        return stateReducer(spoiledStateOrState);
+    };
 }
 
 export function compose(...functons) {
-    return functons.reduce((r, f) => (...args) => r(f(...args)), x => x);
+    return functons
+        .reduce(
+            (result, func) => (...args) => result(func(...args)),
+            x => x);
 }
 
 export function pipe(...functons) {
-    return functons.reduceRight((r, f) => (...args) => r(f(...args)), x => x);
+    return functons
+        .reduceRight(
+            (result, func) => (...args) => result(func(...args)),
+            x => x);
 }
 
 export function overState(stateReducer) {
@@ -41,8 +50,10 @@ export function overEffects(effectsReducer) {
 export function pipeReducers(...reducers) {
     return (state, action) => {
         const reducersChain = reducers
-            .map(r => s => r(s, action))
-            .map(r => s => pipe(extractState, r, assignTo(s))(s));
+            .map(reducer => state =>
+                reducer(state, action))
+            .map(reducer => state =>
+                pipe(spoiled.extractState, reducer, assignTo(state))(state));
         return pipe(...reducersChain)(state);
-    }
+    };
 }

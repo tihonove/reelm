@@ -4,7 +4,8 @@
  * @param {Array} array of strings
  * @return {Number} Sum of characters
  */
-export const sumCharsInArrayOfStrings = arr => arr.reduce((memo, element) => memo + element.length, 0);
+export const sumCharsInArrayOfStrings = arr =>
+    arr.reduce((memo, element) => memo + element.length, 0);
 
 /**
  * Returns last element of the provided array

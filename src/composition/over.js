@@ -1,64 +1,68 @@
-import { effectType } from '../effects'
+import { effectType } from '../effect-creators';
 
-import { mapIf } from '../utils/effects-utils'
-import { compose, overState, overEffects } from '../utils/reducer-utils'
-import { getIn, updateIn } from '../utils/state-utils'
+import { mapIf } from '../map-effects';
+import { compose, overState, overEffects } from '../utils/reducer-utils';
+import { getIn, setIn } from '../utils/immutable-utils';
 
-function transformSelect(selector) {
-    return function(selectEffect) {
-        return { ...selectEffect, selector: (...args) => selector(selectEffect.selector(...args)) }
-    }
+const transformSelect = selector =>
+    selectEffect => ({
+        ...selectEffect,
+        selector: compose(selectEffect.selector, selector),
+    });
+
+const isSelect = effect => effect.type === effectType.SELECT;
+
+const lens = (getter, setter) => ({ getter, setter });
+
+function createPropLens(path) {
+    return lens(
+        target => getIn(target, path),
+        target => value => setIn(target, path, value)
+    );
 }
 
-function isSelect(effect) {
-    return effect.type === effectType.SELECT;
-}
-
-function createSelector(stateSubSetDefinition, getInitialState) {
-    if (Array.isArray(stateSubSetDefinition)) {
-        return function (state) {
-            return getIn(state, stateSubSetDefinition)
+function createSubsetLens(subsetDef, getInitialState) {
+    const subsetPaths = Object
+        .getOwnPropertyNames(subsetDef)
+        .map(prop => [prop, subsetDef[prop]]);
+    return lens(
+        state => {
+            return subsetPaths
+                .map(([prop, path]) => [prop, getIn(state, path)])
+                .filter(([, value]) => value !== undefined)
+                .reduce((focus, [prop, value]) =>
+                    setIn(focus, [prop], value), getInitialState());
+        },
+        target => value => {
+            return subsetPaths
+                .reduce((state, [prop, path]) =>
+                    setIn(state, path, getIn(value, [prop])),
+                    target);
         }
-    }
-    else if (typeof stateSubSetDefinition === 'object') {
-        return function (state) {
-            return Object
-                .getOwnPropertyNames(stateSubSetDefinition)
-                .map(prop => [prop, getIn(state, stateSubSetDefinition[prop])])
-                .filter(x => x[1] !== undefined)
-                .reduce((x, y) => updateIn(x, [y[0]], () => y[1]), getInitialState())
-        }
-    }
-    throw "Wrong stateSubSetDefinition";
+    );
 }
 
-function createUpdater(stateSubSetDefinition) {
-    if (Array.isArray(stateSubSetDefinition)) {
-        return state => stateToApply => updateIn(state, stateSubSetDefinition, () => stateToApply);
+function createLens(lensDefintion, getInitialState) {
+    if (Array.isArray(lensDefintion)) {
+        return createPropLens(lensDefintion);
     }
-    else {
-        return function(state) {
-            return function(stateToApply)  {
-                return Object
-                    .getOwnPropertyNames(stateSubSetDefinition)
-                    .reduce((result, prop) => updateIn(result, stateSubSetDefinition[prop], () => getIn(stateToApply, prop)), state);
-            }
-        }    
-    }
+    return createSubsetLens(lensDefintion, getInitialState);
 }
 
-export default function over(stateSubSetDefinition, initialState) {
-    var subSetUpdater = createUpdater(stateSubSetDefinition);
+export default function over(lensDefintion, initialState) {
+    return function reducerWrapper(reducer) {
+        const lens = createLens(
+            lensDefintion, initialState ? (() => initialState) : reducer);
+        const transformEffects =
+            effects => effects::mapIf(isSelect, transformSelect(lens.getter));
 
-    return function(reducer) {
-        var selectSubSet = createSelector(stateSubSetDefinition, initialState ? (() => initialState) : reducer);
-        return function(state, action) {
+        return function overReducer(state, action) {
             return compose(
-                overState(subSetUpdater(state)), 
-                overEffects(effects => effects::mapIf(isSelect, transformSelect(selectSubSet))),
+                overState(lens.setter(state)),
+                overEffects(transformEffects),
                 x => reducer(x, action),
-                selectSubSet
+                lens.getter
                 )(state);
-        }
-    }
+        };
+    };
 }

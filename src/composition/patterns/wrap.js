@@ -8,13 +8,15 @@
  * @return {Object} Wrapped action eg. { type: 'Counters.Top.Increment', payload: 1 }
  */
 export default (action, pattern, match) => {
-  const type = Object
-    .keys(match)
-    .reduce((memo, chunk) =>
-      memo.replace(`[${chunk}]`, match[chunk]), pattern) + `.${action.type}`;
+    const type = Object
+        .keys(match)
+        .reduce(
+            (memo, chunk) =>
+                memo.replace(`[${chunk}]`, match[chunk]), pattern) +
+        `.${action.type}`;
 
-  return {
-    ...action,
-    type
-  };
+    return {
+        ...action,
+        type,
+    };
 };

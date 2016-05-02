@@ -1,16 +1,22 @@
-import unwrap from './patterns/unwrap'
+import unwrap from './patterns/unwrap';
 
 export default function conditional(pattern) {
-    var compiledUnwrap = unwrap(pattern);
+    const compiledUnwrap = unwrap(pattern);
 
-    return function (reducer) {
+    return function conditionalReducerWrapper(reducer) {
         return function conditionalReducer(state, action) {
-            if (!action)
+            if (!action || action.type === undefined) {
                 return state;
-            var unwrappedAction = compiledUnwrap(action);
-            if (unwrappedAction)
-                return reducer(state, { ...unwrappedAction, match: unwrappedAction.match[pattern] })
-            return state;
-        }
-    }
+            }
+            const unwrappedAction = compiledUnwrap(action);
+            if (!unwrappedAction) {
+                return state;
+            }
+            const actionWithMatch = {
+                ...unwrappedAction,
+                match: unwrappedAction.match[pattern],
+            };
+            return reducer(state, actionWithMatch);
+        };
+    };
 }
