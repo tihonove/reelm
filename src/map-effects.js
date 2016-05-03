@@ -14,6 +14,9 @@ function createPlainEffectMap(selector) {
             const mappedChildren = plainEffect.generator::map(selector);
             return { ...plainEffect, generator: mappedChildren };
         }
+        if (Array.isArray(plainEffect)) {
+            return plainEffect.map(createPlainEffectMap(selector));
+        }
         return selector(plainEffect);
     };
 }
