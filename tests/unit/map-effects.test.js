@@ -11,4 +11,14 @@ describe('map', () => {
         expect(mapped.next()).toEqual({ value: 2, done: false });
         expect(mapped.next()).toEqual({ value: 3, done: true });
     });
+
+    it('should map arrays', () => {
+        const generator = function* () {
+            yield [1, 2, 3];
+            return 3;
+        };
+        const mapped = generator::map(x => x + 1)();
+
+        expect(mapped.next()).toEqual({ value: [2, 3, 4], done: false });
+    });
 });
