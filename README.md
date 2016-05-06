@@ -1,6 +1,6 @@
 #reelm
 
-[![Travis branch](https://img.shields.io/travis/tihonove/reelm/develop.svg?maxAge=2592000&style=flat)](https://travis-ci.org/tihonove/reelm) [![Coveralls branch](https://img.shields.io/coveralls/tihonove/reelm/develop.svg?maxAge=2592000&style=flat)](https://coveralls.io/github/tihonove/reelm) [![npm](https://img.shields.io/npm/v/reelm.svg?maxAge=2592000&style=flat)](https://www.npmjs.com/package/reelm)
+[![Travis branch](https://img.shields.io/travis/tihonove/reelm/master.svg?maxAge=300&style=flat)](https://travis-ci.org/tihonove/reelm) [![Coveralls](https://img.shields.io/coveralls/tihonove/reelm/master.svg?maxAge=300&style=flat)](https://coveralls.io/github/tihonove/reelm) [![npm](https://img.shields.io/npm/v/reelm.svg?maxAge=300&style=flat)](https://www.npmjs.com/package/reelm)
 
 # Getting started
 
@@ -34,7 +34,7 @@ npm install
 npm start
 ```
 
-### Data editor with confim dialog
+### Data editor with confirmation dialog
 
 ```
 cd 03_data_editor_with_confirm

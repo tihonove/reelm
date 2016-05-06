@@ -67,6 +67,26 @@ describe('EffectRunner', () => {
         expect(catchedException).toEqual('error');
     });
 
+    ait('should process catch exceptions in yielded array call', async () => {
+        const dispatch = jasmine.createSpy('dispatch');
+        let catchedException = null;
+
+        const effect = function* () {
+            try {
+                yield [call(function* () {
+                    throw 'error';
+                })];
+            }
+            catch (error) {
+                catchedException = error;
+            }
+        };
+
+        await runEffect(effect, dispatch);
+
+        expect(catchedException).toEqual('error');
+    });
+
     ait('should return value from call effect', async () => {
         const dispatch = jasmine.createSpy('dispatch');
         let returnValue = null;
@@ -106,6 +126,50 @@ describe('EffectRunner', () => {
                 yield call(async function () {
                     await rejectAfter(10, 'error');
                 });
+            }
+            catch (error) {
+                catchedException = error;
+            }
+        };
+
+        await runEffect(effect, dispatch);
+
+        expect(catchedException).toEqual('error');
+    });
+
+    ait('should catch exceptions in array promises in call', async () => {
+        const dispatch = jasmine.createSpy('dispatch');
+        let catchedException = null;
+
+        const effect = function* () {
+            try {
+                yield call(function* () {
+                    yield [
+                        call(rejectAfter(10, 'error')),
+                        call(returnAfter(10, 'value')),
+                    ];
+                });
+            }
+            catch (error) {
+                catchedException = error;
+            }
+        };
+
+        await runEffect(effect, dispatch);
+
+        expect(catchedException).toEqual('error');
+    });
+
+    ait('should catch exceptions in array promises in call', async () => {
+        const dispatch = jasmine.createSpy('dispatch');
+        let catchedException = null;
+
+        const effect = function* () {
+            try {
+                yield [
+                    call(rejectAfter(10, 'error')),
+                    call(returnAfter(10, 'value')),
+                ];
             }
             catch (error) {
                 catchedException = error;
