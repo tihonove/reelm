@@ -3,7 +3,7 @@ import '../node_modules/todomvc-app-css/index.css';
 
 import React from 'react';
 import ReactDom from 'react-dom';
-import { compose, createStore, applyMiddleware } from 'redux';
+import { compose, createStore } from 'redux';
 import { Provider } from 'react-redux';
 import { reelmRunner } from 'reelm';
 
