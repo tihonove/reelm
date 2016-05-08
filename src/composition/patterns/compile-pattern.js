@@ -48,13 +48,13 @@ const splitPatternToChunks = pattern => pattern
  * @param {Array} chunks
  * @return {RegExp}
  */
-const buildRegExpOfChunks = chunks => chunks
-    .reduce((memo, chunk) => {
+const buildRegExpOfChunks = chunks => '^' + chunks
+    .map(chunk => {
         if (chunk.dynamic) {
-            return `${memo}${ALPHANUMERICAL_GROUP_REGEXP_STRING}\\.`;
+            return `${ALPHANUMERICAL_GROUP_REGEXP_STRING}`;
         }
-        return `${memo}${chunk.name}\\.`;
-    }, '^') + '?(.*)?$';
+        return `${chunk.name}`;
+    }).join('\\.') + '(\\.(.*))?$';
 
 /**
  * Compiles String pattern which may look like: Foo.Bar.[Baz]

@@ -65,6 +65,8 @@ function convertTakes(compiledUnwrap, pattern, match) {
                 }
                 return oldCondition(unwrapped);
             };
+            const oldMap = sideEffect.map;
+            sideEffect.map = action => oldMap(compiledUnwrap(action));
         }
         return sideEffect;
     };
