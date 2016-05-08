@@ -30,7 +30,8 @@ async function processPlainSideEffect(
             effect.generator, dispatch, getState, actionObservable);
     }
     if (effect.type === effectType.TAKE) {
-        return await actionObservable::first(effect.condition);
+        const takenAction = await actionObservable::first(effect.condition);
+        return effect.map(takenAction);
     }
     if (effect.type === effectType.SELECT) {
         return effect.selector(getState());

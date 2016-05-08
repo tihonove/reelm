@@ -1,7 +1,9 @@
 import { createStore } from 'redux';
-import { reelmRunner } from '../../src/index';
-import { put } from '../../src/effects';
+import { reelmRunner, spoiled, scoped } from '../../src/index';
+import { put, take } from '../../src/effects';
 import { defineReducer, perform } from '../../src/fluent';
+
+const nextTick = () => new Promise(x => setTimeout(x, 0));
 
 describe('ReelmRunner', () => {
     it('should not affect normal reducers', () => {
@@ -57,5 +59,59 @@ describe('ReelmRunner', () => {
             [{ value: {} }, { type: 'Namespace.Action' }],
             [{ value: {} }, { type: 'Namespace.PostAction' }],
         ]);
+    });
+
+    ait('should return convert action from take effects', async () => {
+        let yieldedAction = null;
+        const reducer = (state, action) => spoiled(state, function* () {
+            if (action.type === 'SomeAction') {
+                yieldedAction = yield take(x => x.type === 'ActionToTake');
+            }
+        });
+
+        const store = createStore(scoped('Namespace')(reducer), reelmRunner());
+
+        store.dispatch({ type: 'Namespace.SomeAction' });
+        await nextTick();
+        store.dispatch({ type: 'Namespace.ActionToTake' });
+        await nextTick();
+
+        expect(yieldedAction).toEqual({ type: 'ActionToTake', match: { Namespace: { } } });
+    });
+
+    ait('should return convert action from take effects with double scoped', async () => {
+        let yieldedAction = null;
+        const reducer = (state, action) => spoiled(state, function* () {
+            if (action.type === 'SomeAction') {
+                yieldedAction = yield take(x => x.type === 'ActionToTake');
+            }
+        });
+
+        const store = createStore(scoped('Namespace1')(scoped('Namespace2')(reducer)), reelmRunner());
+
+        store.dispatch({ type: 'Namespace1.Namespace2.SomeAction' });
+        await nextTick();
+        store.dispatch({ type: 'Namespace1.Namespace2.ActionToTake' });
+        await nextTick();
+
+        expect(yieldedAction).toEqual({ type: 'ActionToTake', match: { Namespace1: {}, Namespace2: {} } });
+    });
+
+    ait('should return convert action from take effects with dynamic scopes', async () => {
+        let yieldedAction = null;
+        const reducer = (state, action) => spoiled(state, function* () {
+            if (action.type === 'SomeAction') {
+                yieldedAction = yield take(x => x.type === 'ActionToTake');
+            }
+        });
+
+        const store = createStore(scoped('Namespace1')(scoped('Namespace2.[Value].Namespace3')(reducer)), reelmRunner());
+
+        store.dispatch({ type: 'Namespace1.Namespace2.2.Namespace3.SomeAction' });
+        await nextTick();
+        store.dispatch({ type: 'Namespace1.Namespace2.2.Namespace3.ActionToTake' });
+        await nextTick();
+
+        expect(yieldedAction).toEqual({ type: 'ActionToTake', match: { Namespace1: {}, ['Namespace2.[Value].Namespace3']: { Value: '2' } } });
     });
 });
