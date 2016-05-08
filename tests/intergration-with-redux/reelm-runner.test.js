@@ -118,7 +118,7 @@ describe('ReelmRunner', () => {
         });
 
         const scopedReducer =
-            scoped('Namespace13')(
+            scoped('Namespace1')(
                 scoped('Namespace2.[Value].Namespace3')(
                     reducer));
         const store = createStore(scopedReducer, reelmRunner());
@@ -132,8 +132,10 @@ describe('ReelmRunner', () => {
 
         expect(yieldedAction).toEqual({
             type: 'ActionToTake',
-            match: { Namespace1: {},
-            ['Namespace2.[Value].Namespace3']: { Value: '2' } },
+            match: {
+                Namespace1: {},
+                ['Namespace2.[Value].Namespace3']: { Value: '2' },
+            },
         });
     });
 });
