@@ -15,6 +15,30 @@ describe('conditional', () => {
         ]);
     });
 
+    it('should not match by prefix without dot', () => {
+        const reducer = jasmine
+            .createSpy('reducer')
+            .and.callFake(state => state);
+
+        const scopedReducer = conditional('Namespace')(reducer);
+        const result = scopedReducer('state', { type: 'NamespaceAndSuffix' });
+
+        expect(result).toEqual('state');
+        expect(reducer.calls.allArgs()).toEqual([]);
+    });
+
+    it('should not match by prefix without dot with long condition', () => {
+        const reducer = jasmine
+            .createSpy('reducer')
+            .and.callFake(state => state);
+
+        const scopedReducer = conditional('Namespace.Action')(reducer);
+        const result = scopedReducer('state', { type: 'Namespace.ActionAndSuffix' });
+
+        expect(result).toEqual('state');
+        expect(reducer.calls.allArgs()).toEqual([]);
+    });
+
     it('should match single dynamic prefix', () => {
         const reducer = jasmine
             .createSpy('reducer')
