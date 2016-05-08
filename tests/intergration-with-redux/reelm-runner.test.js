@@ -76,7 +76,10 @@ describe('ReelmRunner', () => {
         store.dispatch({ type: 'Namespace.ActionToTake' });
         await nextTick();
 
-        expect(yieldedAction).toEqual({ type: 'ActionToTake', match: { Namespace: { } } });
+        expect(yieldedAction).toEqual({
+            type: 'ActionToTake',
+            match: { Namespace: { } },
+        });
     });
 
     ait('should return convert action from take effects with double scoped', async () => {
@@ -87,14 +90,23 @@ describe('ReelmRunner', () => {
             }
         });
 
-        const store = createStore(scoped('Namespace1')(scoped('Namespace2')(reducer)), reelmRunner());
+        const scopedReducer =
+            scoped('Namespace1')(
+                scoped('Namespace2')(
+                    reducer));
+        const store = createStore(scopedReducer, reelmRunner());
 
-        store.dispatch({ type: 'Namespace1.Namespace2.SomeAction' });
+        store.dispatch({
+            type: 'Namespace1.Namespace2.SomeAction' });
         await nextTick();
-        store.dispatch({ type: 'Namespace1.Namespace2.ActionToTake' });
+        store.dispatch({
+            type: 'Namespace1.Namespace2.ActionToTake' });
         await nextTick();
 
-        expect(yieldedAction).toEqual({ type: 'ActionToTake', match: { Namespace1: {}, Namespace2: {} } });
+        expect(yieldedAction).toEqual({
+            type: 'ActionToTake',
+            match: { Namespace1: {}, Namespace2: {} },
+        });
     });
 
     ait('should return convert action from take effects with dynamic scopes', async () => {
@@ -105,13 +117,23 @@ describe('ReelmRunner', () => {
             }
         });
 
-        const store = createStore(scoped('Namespace1')(scoped('Namespace2.[Value].Namespace3')(reducer)), reelmRunner());
+        const scopedReducer =
+            scoped('Namespace13')(
+                scoped('Namespace2.[Value].Namespace3')(
+                    reducer));
+        const store = createStore(scopedReducer, reelmRunner());
 
-        store.dispatch({ type: 'Namespace1.Namespace2.2.Namespace3.SomeAction' });
+        store.dispatch({
+            type: 'Namespace1.Namespace2.2.Namespace3.SomeAction' });
         await nextTick();
-        store.dispatch({ type: 'Namespace1.Namespace2.2.Namespace3.ActionToTake' });
+        store.dispatch({
+            type: 'Namespace1.Namespace2.2.Namespace3.ActionToTake' });
         await nextTick();
 
-        expect(yieldedAction).toEqual({ type: 'ActionToTake', match: { Namespace1: {}, ['Namespace2.[Value].Namespace3']: { Value: '2' } } });
+        expect(yieldedAction).toEqual({
+            type: 'ActionToTake',
+            match: { Namespace1: {},
+            ['Namespace2.[Value].Namespace3']: { Value: '2' } },
+        });
     });
 });

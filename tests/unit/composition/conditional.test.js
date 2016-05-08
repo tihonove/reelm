@@ -33,7 +33,8 @@ describe('conditional', () => {
             .and.callFake(state => state);
 
         const scopedReducer = conditional('Namespace.Action')(reducer);
-        const result = scopedReducer('state', { type: 'Namespace.ActionAndSuffix' });
+        const result = scopedReducer('state', {
+            type: 'Namespace.ActionAndSuffix' });
 
         expect(result).toEqual('state');
         expect(reducer.calls.allArgs()).toEqual([]);

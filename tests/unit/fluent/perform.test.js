@@ -16,9 +16,9 @@ describe('perform', () => {
         const spoiledReducer = perform(function* ({ valueFromAction }) {
             yield valueFromAction;
         });
-        const [, effects] =
-            spoiled.split(
-                spoiledReducer('state', { valueFromAction: 'valueFromAction' }));
+        const reducerResult =
+            spoiledReducer('state', { valueFromAction: 'valueFromAction' });
+        const [, effects] = spoiled.split(reducerResult);
 
         expect(effects().next().value).toEqual('valueFromAction');
     });
