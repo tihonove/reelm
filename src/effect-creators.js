@@ -53,6 +53,6 @@ export const put = action => {
 export const take = conditionObject => {
     return effect(effectType.TAKE, {
         condition: normalizeTakeCondition(conditionObject),
-        map: x => x
+        map: x => x,
     });
 };
