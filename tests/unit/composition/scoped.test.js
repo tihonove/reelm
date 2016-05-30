@@ -143,6 +143,24 @@ describe('scoped', () => {
             .toEqual({ type: 'Namespace.YieldedAction' });
     });
 
+    it('should not modify effects', () => {
+        const putEffect = put({ type: 'YieldedAction' });
+        const reducer = state => spoiled(state, putEffect);
+
+        const scopedReducer = scoped('Namespace')(reducer);
+        const result = scopedReducer('state', { type: 'Namespace.Action' });
+        const effects = spoiled.extractEffects(result);
+        const effectsGenerator = effects();
+        const effect = effectsGenerator.next().value;
+
+        expect(effect.type)
+            .toEqual(effectType.PUT);
+        expect(effect.action)
+            .toEqual({ type: 'Namespace.YieldedAction' });
+
+        expect(putEffect.action).toEqual({ type: 'YieldedAction' });
+    });
+
     it('should convert put with dynamic part', () => {
         const reducer = state => spoiled(state, function* () {
             yield put({ type: 'YieldedAction' });

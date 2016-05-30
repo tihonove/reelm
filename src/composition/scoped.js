@@ -19,7 +19,10 @@ function scopedEffectsTransformer(compiledUnwrap, pattern, match) {
 function convertPuts(pattern, match) {
     return function effectSelector(sideEffect) {
         if (sideEffect.type === effectType.PUT) {
-            sideEffect.action = wrap(sideEffect.action, pattern, match);
+            return {
+                ...sideEffect,
+                action: wrap(sideEffect.action, pattern, match),
+            };
         }
         return sideEffect;
     };
