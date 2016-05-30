@@ -15,7 +15,12 @@ function createPlainEffectMap(selector) {
             return { ...plainEffect, generator: mappedChildren };
         }
         if (Array.isArray(plainEffect)) {
-            return plainEffect.map(createPlainEffectMap(selector));
+            return plainEffect.map(x => {
+                if (typeof x === 'function') {
+                    return x::map(selector);
+                }
+                return createPlainEffectMap(selector)(x);
+            });
         }
         return selector(plainEffect);
     };

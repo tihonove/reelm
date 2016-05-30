@@ -1,5 +1,11 @@
 import { createStore } from 'redux';
-import { reelmRunner, spoiled, scoped } from '../../src/index';
+import {
+    reelmRunner,
+    spoiled,
+    scoped,
+    conditional,
+    pipeReducers,
+} from '../../src/index';
 import { put, take } from '../../src/effects';
 import { defineReducer, perform } from '../../src/fluent';
 
@@ -137,5 +143,57 @@ describe('ReelmRunner', () => {
                 ['Namespace2.[Value].Namespace3']: { Value: '2' },
             },
         });
+    });
+
+    ait('should correctly process put effects', async () => {
+        const reducer =
+            jasmine.createSpy('reducer')
+            .and.callFake(pipeReducers(
+                conditional('SomeAction')(
+                    perform(put({ type: 'ActionToPut' }))),
+            ));
+
+        const scopedReducer = scoped('Namespace1')(reducer);
+        const store = createStore(scopedReducer, reelmRunner());
+
+        store.dispatch({ type: 'Namespace1.SomeAction' });
+        await nextTick();
+
+        store.dispatch({ type: 'Namespace1.SomeAction' });
+        await nextTick();
+
+        expect(reducer.calls.allArgs()).toEqual([
+            [undefined, { type: '@@redux/INIT' }],
+            [undefined, { type: 'SomeAction', match: {} }],
+            [undefined, { type: 'ActionToPut', match: {} }],
+            [undefined, { type: 'SomeAction', match: {} }],
+            [undefined, { type: 'ActionToPut', match: {} }],
+        ]);
+    });
+
+    ait('should correctly process effects throwed twice', async () => {
+        const reducer =
+            jasmine.createSpy('reducer')
+            .and.callFake(pipeReducers(
+                conditional('SomeAction')(state => spoiled(state, function* () {
+                    yield put({ type: 'ActionToPut1' });
+                })),
+                conditional('SomeAction')(state => spoiled(state, function* () {
+                    yield put({ type: 'ActionToPut2' });
+                })),
+            ));
+
+        const scopedReducer = scoped('Namespace1')(reducer);
+        const store = createStore(scopedReducer, reelmRunner());
+
+        store.dispatch({ type: 'Namespace1.SomeAction' });
+        await nextTick();
+
+        expect(reducer.calls.allArgs()).toEqual([
+            [undefined, { type: '@@redux/INIT' }],
+            [undefined, { type: 'SomeAction', match: {} }],
+            [undefined, { type: 'ActionToPut1', match: {} }],
+            [undefined, { type: 'ActionToPut2', match: {} }],
+        ]);
     });
 });
