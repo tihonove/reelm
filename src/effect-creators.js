@@ -11,6 +11,7 @@ export const effectType = {
     PUT: 'PUT',
     TAKE: 'TAKE',
     NOOP: 'NOOP',
+    RACE: 'RACE',
 };
 
 function normalizeTakeCondition(takeArgument) {
@@ -55,4 +56,8 @@ export const take = conditionObject => {
         condition: normalizeTakeCondition(conditionObject),
         map: x => x,
     });
+};
+
+export const race = contenders => {
+    return effect(effectType.RACE, { contenders });
 };
