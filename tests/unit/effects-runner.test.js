@@ -1,4 +1,4 @@
-import { noop, take, select, fork, join, put, call }
+import { noop, take, select, fork, join, put, call, race }
     from '../../src/effect-creators';
 import { map } from '../../src/map-effects';
 import runEffect from '../../src/effects-runner';
@@ -507,5 +507,22 @@ describe('EffectRunner', () => {
             { type: 'TheAction' },
             { type: 'Action' },
         ]);
+    });
+
+    ait('should race between two effects', async () => {
+        const actionObservable = new ActionsObservable();
+        const racedValues = { first: 1, second: 2 };
+
+        const effect = function* () {
+            const { first, second } = yield race({
+                first: call(function*() {
+                    return racedValues.first;
+                }),
+                second: returnAfter(20, racedValues.second),
+            });
+            expect(first).toEqual(racedValues.first);
+            expect(second).not.toEqual(racedValues.second);
+        };
+        await runEffect(effect, x => x, null, actionObservable);
     });
 });
