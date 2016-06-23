@@ -49,7 +49,7 @@ describe('EffectRunner', () => {
 
     ait('should process catch exceptions in nested call', async () => {
         const dispatch = jasmine.createSpy('dispatch');
-        let catchedException = null;
+        let caughtException = null;
 
         const effect = function* () {
             try {
@@ -58,18 +58,18 @@ describe('EffectRunner', () => {
                 });
             }
             catch (error) {
-                catchedException = error;
+                caughtException = error;
             }
         };
 
         await runEffect(effect, dispatch);
 
-        expect(catchedException).toEqual('error');
+        expect(caughtException).toEqual('error');
     });
 
     ait('should process catch exceptions in yielded array call', async () => {
         const dispatch = jasmine.createSpy('dispatch');
-        let catchedException = null;
+        let caughtException = null;
 
         const effect = function* () {
             try {
@@ -78,13 +78,13 @@ describe('EffectRunner', () => {
                 })];
             }
             catch (error) {
-                catchedException = error;
+                caughtException = error;
             }
         };
 
         await runEffect(effect, dispatch);
 
-        expect(catchedException).toEqual('error');
+        expect(caughtException).toEqual('error');
     });
 
     ait('should return value from call effect', async () => {
@@ -119,7 +119,7 @@ describe('EffectRunner', () => {
 
     ait('should catch exceptions in promises in call', async () => {
         const dispatch = jasmine.createSpy('dispatch');
-        let catchedException = null;
+        let caughtException = null;
 
         const effect = function* () {
             try {
@@ -128,18 +128,18 @@ describe('EffectRunner', () => {
                 });
             }
             catch (error) {
-                catchedException = error;
+                caughtException = error;
             }
         };
 
         await runEffect(effect, dispatch);
 
-        expect(catchedException).toEqual('error');
+        expect(caughtException).toEqual('error');
     });
 
     ait('should catch exceptions in array promises in call', async () => {
         const dispatch = jasmine.createSpy('dispatch');
-        let catchedException = null;
+        let caughtException = null;
 
         const effect = function* () {
             try {
@@ -151,18 +151,18 @@ describe('EffectRunner', () => {
                 });
             }
             catch (error) {
-                catchedException = error;
+                caughtException = error;
             }
         };
 
         await runEffect(effect, dispatch);
 
-        expect(catchedException).toEqual('error');
+        expect(caughtException).toEqual('error');
     });
 
     ait('should catch exceptions in array promises in call', async () => {
         const dispatch = jasmine.createSpy('dispatch');
-        let catchedException = null;
+        let caughtException = null;
 
         const effect = function* () {
             try {
@@ -172,25 +172,25 @@ describe('EffectRunner', () => {
                 ];
             }
             catch (error) {
-                catchedException = error;
+                caughtException = error;
             }
         };
 
         await runEffect(effect, dispatch);
 
-        expect(catchedException).toEqual('error');
+        expect(caughtException).toEqual('error');
     });
 
     ait('should catch exceptions in promises in call when mapped', async () => {
         const dispatch = jasmine.createSpy('dispatch');
-        let catchedException = null;
+        let caughtException = null;
 
         const effect = function* () {
             try {
                 yield { type: 'WillBeMapped' };
             }
             catch (error) {
-                catchedException = error;
+                caughtException = error;
             }
         };
         const mappedEffect = effect::map(x =>
@@ -200,7 +200,7 @@ describe('EffectRunner', () => {
         );
         await runEffect(mappedEffect, dispatch);
 
-        expect(catchedException).toEqual('error');
+        expect(caughtException).toEqual('error');
     });
 
     ait('should return result from promises in call when mapped', async () => {
@@ -222,7 +222,7 @@ describe('EffectRunner', () => {
 
     ait('should catch exceptions in promises in call via multiple maps', async () => {
         const dispatch = jasmine.createSpy('dispatch');
-        let catchedException = null;
+        let caughtException = null;
 
         const effect = function* () {
             try {
@@ -233,12 +233,12 @@ describe('EffectRunner', () => {
                 })::map(x => x)::map(x => x));
             }
             catch (error) {
-                catchedException = error;
+                caughtException = error;
             }
         };
         await runEffect(effect, dispatch);
 
-        expect(catchedException).toEqual('error');
+        expect(caughtException).toEqual('error');
     });
 
     ait('should return value from promises in call via multiple maps', async () => {
@@ -280,8 +280,8 @@ describe('EffectRunner', () => {
 
     ait('should catch exceptions in promises in different levels', async () => {
         const dispatch = jasmine.createSpy('dispatch');
-        let catchedExceptionInner = null;
-        let catchedExceptionOuter = null;
+        let caughtExceptionInner = null;
+        let caughtExceptionOuter = null;
 
         const effect = function* () {
             try {
@@ -293,19 +293,19 @@ describe('EffectRunner', () => {
                         })::map(x => x));
                     }
                     catch (error) {
-                        catchedExceptionInner = error;
+                        caughtExceptionInner = error;
                         throw 'outer-error';
                     }
                 })::map(x => x));
             }
             catch (error) {
-                catchedExceptionOuter = error;
+                caughtExceptionOuter = error;
             }
         };
         await runEffect(effect, dispatch);
 
-        expect(catchedExceptionInner).toEqual('inner-error');
-        expect(catchedExceptionOuter).toEqual('outer-error');
+        expect(caughtExceptionInner).toEqual('inner-error');
+        expect(caughtExceptionOuter).toEqual('outer-error');
     });
 
     ait('should execute and combine array of effects', async () => {
