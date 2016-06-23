@@ -45,6 +45,7 @@ describe('Public interface', () => {
             'put',
             'take',
             'map',
+            'race',
         ], true);
         expect(effectsFunctions.effectType).toBeObject();
 
