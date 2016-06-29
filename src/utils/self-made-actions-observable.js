@@ -1,17 +1,11 @@
-class Subscription {
-    constructor(source) {
+class SubscriptionObserver {
+    constructor(source, observer) {
         this.source = source;
+        this.observer = observer;
     }
 
     unsubscribe() {
         this.source.unsubscribe(this);
-    }
-}
-
-class SubscriptionObserver extends Subscription {
-    constructor(source, observer) {
-        super(source);
-        this.observer = observer;
     }
 
     next(value) {
