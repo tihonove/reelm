@@ -51,12 +51,9 @@ async function processPlainSideEffect(
     if (effect.type === effectType.RACE) {
         const constructorNames = Object.keys(effect.contenders);
         const effectPromises = Object.values(effect.contenders)
-            .map(x => runEffects(x, dispatch, getState, actionObservable));
-        return Promise.race(effectPromises).then(
-            (...args) => args.reduce(
-                (result, value, i) => ({ ...result, [constructorNames[i]]: value }), {}
-            )
-        );
+            .map(x => runEffects(x, dispatch, getState, actionObservable))
+            .map((promise, i) => promise.then(data => ({ [constructorNames[i]]: data })));
+        return Promise.race(effectPromises);
     }
     throw `Uncatched side effect: ${JSON.stringify(effect)}`;
 }

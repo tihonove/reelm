@@ -1,5 +1,6 @@
 import { effectType } from './effect-creators';
 import { effectsToGenerator } from './utils/effects-utils';
+import { mapObject } from './utils/mapObject';
 
 function isCompositeEffect(plainEffect) {
     return (
@@ -14,13 +15,20 @@ function createPlainEffectMap(selector) {
             const mappedChildren = plainEffect.generator::map(selector);
             return { ...plainEffect, generator: mappedChildren };
         }
+        const plainEffectMapper = createPlainEffectMap(selector);
         if (Array.isArray(plainEffect)) {
             return plainEffect.map(x => {
                 if (typeof x === 'function') {
                     return x::map(selector);
                 }
-                return createPlainEffectMap(selector)(x);
+                return plainEffectMapper(x);
             });
+        }
+        if (plainEffect.type === effectType.RACE) {
+            return {
+                ...plainEffect,
+                contenders: mapObject(plainEffectMapper, plainEffect.contenders),
+            };
         }
         return selector(plainEffect);
     };
