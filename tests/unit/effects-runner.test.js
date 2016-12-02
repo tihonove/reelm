@@ -1,4 +1,4 @@
-import { noop, take, select, fork, join, put, call, race }
+import { noop, take, select, fork, join, put, call, race, unprocessed }
     from '../../src/effect-creators';
 import { map } from '../../src/map-effects';
 import runEffect from '../../src/effects-runner';
@@ -524,5 +524,37 @@ describe('EffectRunner', () => {
             expect(second).not.toEqual(racedValues.second);
         };
         await runEffect(effect, x => x, null, actionObservable);
+    });
+
+    ait('should pass to unhandled effects to effect handler', async () => {
+        let effectResolveResult = null;
+        const dispatch = jasmine.createSpy('dispatch');
+
+        const effect = function* () {
+            effectResolveResult = yield { type: 'Action' };
+        };
+
+        const customEffectsHandler = effect => effect.type + 'Processed';
+        await runEffect(effect, dispatch, null, null, customEffectsHandler);
+
+        expect(effectResolveResult).toEqual('ActionProcessed');
+    });
+
+    ait('should throw if effects was not processed', async () => {
+        const dispatch = jasmine.createSpy('dispatch');
+
+        const effect = function* () {
+            yield { type: 'Action' };
+        };
+
+        let error;
+        try {
+            const customEffectsHandler = () => unprocessed();
+            await runEffect(effect, dispatch, null, null, customEffectsHandler);
+        }
+        catch (e) {
+            error = e;
+        }
+        expect(error).toEqual('Uncatched side effect: {"type":"Action"}');
     });
 });

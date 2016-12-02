@@ -61,3 +61,5 @@ export const take = conditionObject => {
 export const race = contenders => {
     return effect(effectType.RACE, { contenders });
 };
+
+export const unprocessed = () => ({ __NOT_PROCESSED__: true });

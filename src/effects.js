@@ -8,6 +8,7 @@ export {
     put,
     take,
     race,
+    unprocessed,
 } from './effect-creators';
 
 export { map } from './map-effects';

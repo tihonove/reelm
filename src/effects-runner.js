@@ -12,10 +12,18 @@ class Task {
     }
 }
 
+// TODO
+// eslint-disable-next-line max-params
 async function processPlainSideEffect(
-    effect, dispatch, getState, actionObservable) {
+    effect, dispatch, getState, actionObservable, effectsHandler) {
     if (effect.then) {
         return await effect;
+    }
+    if (effectsHandler) {
+        const handleResult = effectsHandler(effect);
+        if (!handleResult.__NOT_PROCESSED__) {
+            return handleResult;
+        }
     }
     if (Array.isArray(effect)) {
         const effectPromises = effect
@@ -58,8 +66,10 @@ async function processPlainSideEffect(
     throw `Uncatched side effect: ${JSON.stringify(effect)}`;
 }
 
+// TODO
+// eslint-disable-next-line max-params
 async function runEffects(
-    effect, dispatch, getState, actionObservable) {
+    effect, dispatch, getState, actionObservable, effectsHandler) {
     const generator = effectsToGenerator(effect)();
     if (generator.then) {
         return await generator;
@@ -70,7 +80,7 @@ async function runEffects(
     while (!next.done) {
         try {
             nextArgument = await processPlainSideEffect(
-                next.value, dispatch, getState, actionObservable);
+                next.value, dispatch, getState, actionObservable, effectsHandler);
             next = generator.next(nextArgument);
         }
         catch (exception) {

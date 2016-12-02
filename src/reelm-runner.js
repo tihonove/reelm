@@ -2,7 +2,7 @@ import ActionsObservable from './utils/self-made-actions-observable';
 import spoiled from './spoiled';
 import runEffects from './effects-runner';
 
-export default function reelmRunner() {
+export default function reelmRunner(effectsHandler) {
     return next => (reducer, initialState, enhancer) => {
         const actionsObservable = new ActionsObservable();
 
@@ -22,7 +22,8 @@ export default function reelmRunner() {
                     lastEffects,
                     dispatch,
                     ::store.getState,
-                    actionsObservable);
+                    actionsObservable,
+                    effectsHandler);
             return effectsPromise;
         }
 
